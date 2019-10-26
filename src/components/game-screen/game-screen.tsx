@@ -4,8 +4,9 @@ import Cutscene from '../cutscene/cutscene';
 import InGameView, { GameState } from '../in-game-view/in-game-view';
 import { loadGame, saveFileExists } from '../../utils/save-file-utils';
 
+type ScreenName = 'main-menu' | 'intro' | 'in-game-widget'
 
-export default class GameScreen extends React.Component<{}, { screenName: string }> {
+export default class GameScreen extends React.Component<{}, { screenName: ScreenName }> {
 
   constructor(props: any) {
     super(props)
@@ -22,13 +23,7 @@ export default class GameScreen extends React.Component<{}, { screenName: string
   startSavedGame = () => {
     console.log('load game')
     this.setState({
-      screenName: 'in-game-main'
-    })
-  }
-
-  finishIntro = () => {
-    this.setState({
-      screenName: 'in-game-main'
+      screenName: 'in-game-widget'
     })
   }
 

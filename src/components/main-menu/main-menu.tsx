@@ -13,9 +13,7 @@ interface Props {
 export default function MainMenu(props: Props) {
   return (
     <div className="MainMenu">
-      <h1>Walker</h1>
-      <br />
-      <h2><span>〜</span> Path to Darkness <span>〜</span></h2>
+      <h1>Widgetry</h1>
 
       <MainMenuControls startNewGame={props.startNewGame} startSavedGame={props.startSavedGame} />
       <FooterArea />

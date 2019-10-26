@@ -6,26 +6,15 @@ import MoodHandler from '../mood-handler/mood-handler';
 import { isGameState, saveGame } from '../../utils/save-file-utils';
 
 export type GameState = {
-  mood: Mood
-  time: TimeState
-} & PositionState
-
-export interface PositionState {
-  stepCount: number
-  position: number
+  ordersPending: 0,
+  action: PlayerAction,
 }
 
-export interface TimeState {
-  day: number // full in-game days passed since start
-  second: number // non-pause realtime seconds passed since start of current day
-  paused: boolean // pause during cutscenes, popups, when inactive, etc
-}
+type PlayerAction = 'idle' | 'check-orders' | 'build-widget' | 'test-widget' | 'package-widget' | 'deliver-package'
 
-export interface Mood {
-  overall: number // 0-155. General mood level.
-  r: number // 0-100. Love, passion, bonds.
-  g: number // 0-100. Optimism, wellbeing, altruism.
-  b: number // 0-100. Rationality, thinking, calmness.
+export const newGameState = {
+  ordersPending: 0,
+  action: 'idle'
 }
 
 interface Props {
