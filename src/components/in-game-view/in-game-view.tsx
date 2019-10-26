@@ -41,7 +41,6 @@ export default class InGameView extends React.Component<Props, GameState> {
             steps={this.state.stepCount}
             />
         <FooterArea />
-        <MoodHandler mood={this.state.mood} />
       </div>
     )
   }
