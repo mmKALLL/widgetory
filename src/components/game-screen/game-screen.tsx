@@ -1,7 +1,7 @@
 import React from 'react'
-import MainMenu from '../main-menu/main-menu';
-import Cutscene from '../cutscene/cutscene';
-import InGameView, { GameState } from '../in-game-view/in-game-view';
+import MainMenu from './main-menu/main-menu';
+import Cutscene from './cutscene/cutscene';
+import InGameView, { GameState } from './in-game-view/in-game-view';
 import { loadGame, saveFileExists } from '../../utils/save-file-utils';
 
 type ScreenName = 'main-menu' | 'intro' | 'in-game-widget'
@@ -22,6 +22,12 @@ export default class GameScreen extends React.Component<{}, { screenName: Screen
 
   startSavedGame = () => {
     console.log('load game')
+    this.setState({
+      screenName: 'in-game-widget'
+    })
+  }
+
+  finishIntro = () => {
     this.setState({
       screenName: 'in-game-widget'
     })
@@ -50,18 +56,8 @@ export default class GameScreen extends React.Component<{}, { screenName: Screen
   }
 }
 
-export const initialState: GameState = {
-  stepCount: 0,
-  position: 0, // Can step both forward and back
-  mood: {
-    overall: 40,
-    r: 0,
-    g: 0,
-    b: 0,
-  },
-  time: {
-    day: 0,
-    second: 0,
-    paused: false
-  },
+export const newGameState: GameState = {
+  uncheckedOrders: 0,
+  orders: 0,
+  action: 'idle'
 }

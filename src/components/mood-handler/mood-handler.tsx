@@ -1,5 +1,11 @@
 import React from 'react'
-import { Mood } from '../in-game-view/in-game-view';
+
+export type Mood = {
+  overall: number
+  r: number
+  g: number
+  b: number
+}
 
 interface Props {
   mood: Mood

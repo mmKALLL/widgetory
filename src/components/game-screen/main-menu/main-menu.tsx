@@ -1,9 +1,9 @@
 import React from 'react'
 import './main-menu.sass'
-import FooterArea from '../footer-area/footer-area'
-import Button from '../button/button';
-import { saveFileExists } from '../../utils/save-file-utils';
-import { getRandomMantra, getInitialMantra } from '../../utils/text-utils';
+import FooterArea from '../../footer-area/footer-area'
+import Button from '../../button/button';
+import { saveFileExists } from '../../../utils/save-file-utils';
+import { getRandomMantra, getInitialMantra } from '../../../utils/text-utils';
 
 interface Props {
   startNewGame: () => void
