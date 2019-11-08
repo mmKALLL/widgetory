@@ -1,0 +1,111 @@
+Various notes and design points regarding Widgetory.
+
+2019-11-03
+
+Add inflation as the years go on.
+
+
+2019-11-03
+
+The game can only be played once.
+1 minute = 1 month
+
+The main character has a (hidden) lifetime, and their efficiency goes down over time.
+
+The player could focus first on building their fame and amount of workers, then later on inspiring them and making them really really happy.
+
+There will be numerous endings. They measure the amount of money you got, the amount of research you funded, the way you handled your people, and various existential risk things. Each will provide one line of ending
+
+
+
+e.g.: money optimizer's ending:
+
+
+The historians will write:
+You made 5B USD, caused three wars because of climate change, and handled your employees like animals.
+
+(Photos of actual wars, with fictitious names and content)
+(e.g. War of bongodalia:
+
+1234k casualties, nobody wins.
+Many refugees had to leave their homes, culture, and family behind because of your choices.
+Eight out of nine died.
+
+That's like going to the guillotine hoping to be handed a lottery ticket.
+Just because some overseas dude wanted to sell more widgets.
+)
+
+Your employees will reflect bitterly on their time with you; they were promised money and fame, yet were surrounded by a hostile environment only focused on your happiness.
+
+They will teach their children to be vary of you, and your legacy will be branded as one of hate and racism.
+
+The world has become a corrupted, distrustful place, and most humans will not know happiness for a long time. Your culture of tyranny and absolute increase regardless of others will make sure of that. Research and progress have no place in this artificial world of yours.
+
+You fall down, knowing that you achieved a lot. You made (huge piles/a shitton/an enormous amount) of money, and didn't have to worry about a thing during your older days.
+
+The world was left (happy/unhappy). But what about you?
+
+Were you happy making widgets?
+
+:) / :(
+
+Please write your final thoughts here:
+
+(textbox for analytics)
+(button: proceed to your final rest)
+
+Final rest: Game always shows ending illustration when loaded
+
+
+Ending image basically has four axes:
+
+Lifetime money gained = influence on the world: little / a lot (> 8M) / enormous (> 800M)
+Worker happiness/morale: bad / ok / good
+World happiness: unhappy / happy
+Biodisaster amount: none / some / massive
+
+Little money/influence shows default image of unhappy/massive biodisaster.
+
+
+
+a lot / good / happy / some ending:
+
+Your workers and family will remember:
+You made 200M USD, tried to "fix" climate change (with little success/after it was too late), but always handled your employees like gold. You were able to promote peace and prevent all but one war.
+
+(Photos of actual wars, with fictitious names and content)
+(e.g. Third World War:
+
+388k casualties, nobody wins.
+Producing massive amounts of widgets caused local disasters at production sites. People got fed up with inactivity regarding climate change.
+They left behind their culture and family behind because of your choices.
+
+Most countries went to emergency state for months. They fought a war that set back humanity many years' worth of work.
+
+This could have been avoided with understanding and empathy. But people were unable to see beyond cultural differences.
+Just because some overseas dude wanted to sell more widgets.
+)
+
+Despite that, your employees will reflect on their time with you as one of the most rewarding things in their lives; they were promised money and fame, and you lived up to the promise. They learned many things while working for you, and will try to bring similar practices to their new environments.
+
+They will teach their children to respect your philosoply, and your legacy will be branded as one of generousity and support.
+
+Although the world faces disaster, they will do their best to make others happy as you did. It may not always succeed or be the most optimized option, but it will help people come together and enjoy lives. They will understand that having widgets is not the same as caring friends and family.
+
+You fall down, knowing that you achieved a lot. You made (a lot/tons of/a great amount) of money, and were able to impact the lives of many people.
+
+The world was left happy. But what about you?
+
+
+Were you happy making widgets?
+
+:) / :(
+
+Please write your final thoughts here:
+
+(textbox for analytics)
+(button: proceed to your final rest)
+
+Final rest: Game always shows ending illustration when loaded
+
+(a lot / good / happy / some)
