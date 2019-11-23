@@ -42,9 +42,9 @@ export default class GameScreen extends React.Component<{}, { screenName: Screen
       return (
         <Cutscene text={['Money Match Games presents', 'The 44th Studio Esagames production', 'This game is a product of fiction.', 'Any similarity to real-world names, places, or events is purely coincidental.', 'Not suitable for children or those who are easily disturbed.']} textFadeTime={250} textScreenTime={600} bgColor='#fff' textColor='#111' endHandler={this.finishIntro} />
       )
-    } else if (this.state.screenName === 'in-game-main') {
+    } else if (this.state.screenName === 'in-game-widget') {
       return (
-        <InGameView initialState={saveFileExists ? loadGame() : initialState} />
+        <InGameView initialState={saveFileExists ? loadGame() : newGameState} />
       )
     } else {
       return (
@@ -57,7 +57,16 @@ export default class GameScreen extends React.Component<{}, { screenName: Screen
 }
 
 export const newGameState: GameState = {
+  action: 'idle',
+  money: 200,
+  unlockedFeatures: {
+    "order-button": true,
+  },
+
   uncheckedOrders: 0,
   orders: 0,
-  action: 'idle'
+  widgets: 0,
+  testedWidgets: 0,
+  packages: 0,
+  deliveredPackages: 0,
 }

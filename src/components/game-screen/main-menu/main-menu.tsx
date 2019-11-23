@@ -13,7 +13,7 @@ interface Props {
 export default function MainMenu(props: Props) {
   return (
     <div className="MainMenu">
-      <h1>Widgetry</h1>
+      <h1>Widgetory</h1>
 
       <MainMenuControls startNewGame={props.startNewGame} startSavedGame={props.startSavedGame} />
       <FooterArea />
