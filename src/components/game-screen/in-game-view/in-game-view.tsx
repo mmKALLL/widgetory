@@ -21,6 +21,22 @@ export type PlayerAction = 'idle' | 'check-orders' | 'build-widget' | 'test-widg
 
 export type FeatureName = 'order-button' | 'build-button' | 'test-button' | 'package-button' | 'deliver-button'
 
+export function isGameState(state: any): state is GameState {
+  return state !== undefined &&
+      state !== null &&
+
+      typeof state.action === 'string' &&
+      typeof state.money === 'number' &&
+      typeof state.unlockedFeatures === 'object' &&
+
+      typeof state.uncheckedOrders === 'number' &&
+      typeof state.orders === 'number' &&
+      typeof state.widgets === 'number' &&
+      typeof state.testedWidgets === 'number' &&
+      typeof state.packages === 'number' &&
+      typeof state.deliveredPackages === 'number'
+}
+
 interface Props {
   initialState: GameState
 }

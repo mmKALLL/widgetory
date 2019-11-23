@@ -2,11 +2,16 @@ import React from 'react'
 import MainMenu from './main-menu/main-menu';
 import Cutscene from './cutscene/cutscene';
 import InGameView, { GameState } from './in-game-view/in-game-view';
-import { loadGame, saveFileExists } from '../../utils/save-file-utils';
+import { loadGame } from '../../utils/save-file-utils';
 
-type ScreenName = 'main-menu' | 'intro' | 'in-game-widget'
+type State = {
+  screenName: 'main-menu' | 'intro'
+} | {
+  screenName: 'in-game-widget'
+  loadSavedGame: boolean
+}
 
-export default class GameScreen extends React.Component<{}, { screenName: ScreenName }> {
+export default class GameScreen extends React.Component<{}, State> {
 
   constructor(props: any) {
     super(props)
@@ -21,15 +26,16 @@ export default class GameScreen extends React.Component<{}, { screenName: Screen
   }
 
   startSavedGame = () => {
-    console.log('load game')
     this.setState({
-      screenName: 'in-game-widget'
+      screenName: 'in-game-widget',
+      loadSavedGame: true,
     })
   }
 
   finishIntro = () => {
     this.setState({
-      screenName: 'in-game-widget'
+      screenName: 'in-game-widget',
+      loadSavedGame: false,
     })
   }
 
@@ -44,7 +50,7 @@ export default class GameScreen extends React.Component<{}, { screenName: Screen
       )
     } else if (this.state.screenName === 'in-game-widget') {
       return (
-        <InGameView initialState={saveFileExists ? loadGame() : newGameState} />
+        <InGameView initialState={this.state.loadSavedGame ? loadGame() : newGameState} />
       )
     } else {
       return (

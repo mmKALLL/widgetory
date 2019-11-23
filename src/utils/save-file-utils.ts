@@ -1,4 +1,4 @@
-import { GameState } from "../components/game-screen/in-game-view/in-game-view";
+import { GameState, isGameState } from "../components/game-screen/in-game-view/in-game-view";
 import { newGameState } from "../components/game-screen/game-screen";
 
 const itemName = 'saveFile01'
@@ -27,18 +27,8 @@ export function saveFileExists(): boolean {
     if (isGameState(gameState)) {
       return true
     } else {
-      console.log(`isGameState false for following saved gameState:\n\n${gameState}`)
+      console.log(`isGameState false for following saved gameState:\n\n${saveFile}`)
     }
   }
   return false
-}
-
-export function isGameState(state: any): state is GameState {
-  return state !== undefined &&
-      state !== null &&
-      typeof state.mood === 'object' &&
-      typeof state.time === 'object' &&
-      typeof state.stepCount === 'number' &&
-      typeof state.position === 'number'
-  // TODO: up to date?
 }
