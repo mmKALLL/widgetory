@@ -46,7 +46,7 @@ export default class GameScreen extends React.Component<{}, State> {
       )
     } else if (this.state.screenName === 'intro') {
       return (
-        <Cutscene text={['Money Match Games presents', 'The 44th Studio Esagames production', 'This game is a product of fiction.', 'Any similarity to real-world names, places, or events is purely coincidental.', 'Not suitable for children or those who are easily disturbed.']} textFadeTime={250} textScreenTime={600} bgColor='#fff' textColor='#111' endHandler={this.finishIntro} />
+        <Cutscene text={['Money Match Games presents', 'The 47th Studio Esagames production', 'This game is a product of fiction.', 'Any similarity to real-world names, places, or events is purely coincidental.', 'Not suitable for children or those who are easily disturbed.']} textFadeTime={250} textScreenTime={600} bgColor='#fff' textColor='#111' endHandler={this.finishIntro} />
       )
     } else if (this.state.screenName === 'in-game-widget') {
       return (
