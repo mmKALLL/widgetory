@@ -77,6 +77,10 @@ export default class InGameView extends React.Component<Props, GameState> {
   render() {
     return (
       <div className='game-container'>
+        <div>Current action: {this.state.action}</div>
+        <div>Money: {this.state.money}</div>
+        <div>unlockedFeatures: {Object.entries(this.state.unlockedFeatures).join(', ')}</div>
+
         <ActionPanel
             setPlayerAction={this.setPlayerAction}
             unlockedFeatures={this.state.unlockedFeatures}
