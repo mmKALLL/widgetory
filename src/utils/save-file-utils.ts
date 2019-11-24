@@ -7,7 +7,7 @@ export function saveGame(state: GameState): void {
   const stateJSON = JSON.stringify(state)
   localStorage.setItem(itemName, stateJSON)
   localStorage.setItem('lastSavedAt', Date.now().toString())
-  console.log('game saved')
+  console.log(`game saved`)
 }
 
 export function loadGame(): GameState {
@@ -31,4 +31,16 @@ export function saveFileExists(): boolean {
     }
   }
   return false
+}
+
+export function deleteSaveFileWithConfirm(): void {
+  if (window.confirm('Really hard reset?\nTHIS WILL DELETE ALL SAVED DATA. \n\nPress Cancel/No if unsure.')) {
+    if (!window.confirm('Please press OK/Yes to be saved.\n (Press No/Cancel if you really really want to delete all your saved data.)')) {
+      localStorage.removeItem(itemName)
+      localStorage.removeItem('saveFile02')
+      localStorage.removeItem('saveFile03')
+      localStorage.removeItem('saveFile04')
+      window.location.reload()
+    }
+  }
 }

@@ -46,7 +46,7 @@ export default class InGameView extends React.Component<Props, GameState> {
     super(props)
     this.state = props.initialState
 
-    window.setInterval(() => saveGame(this.state), 10000)
+    window.setInterval(() => saveGame(this.state), 5000)
     window.setTimeout(this.addOrder, 13000)
   }
 
