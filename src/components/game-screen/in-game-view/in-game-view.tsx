@@ -3,10 +3,12 @@ import FooterArea from '../../footer-area/footer-area';
 import { saveGame } from '../../../utils/save-file-utils';
 import Button from '../../button/button';
 import ActionPanel from '../../action-panel/action-panel';
+import MoodHandler, { Mood } from '../../mood-handler/mood-handler';
 
 export type GameState = {
   action: PlayerAction
   money: number
+  mood: Mood
   unlockedFeatures: { [key in FeatureName]?: boolean }
 
   uncheckedOrders: number
@@ -27,6 +29,7 @@ export function isGameState(state: any): state is GameState {
 
       typeof state.action === 'string' &&
       typeof state.money === 'number' &&
+      typeof state.mood === 'object' &&
       typeof state.unlockedFeatures === 'object' &&
 
       typeof state.uncheckedOrders === 'number' &&
@@ -35,6 +38,27 @@ export function isGameState(state: any): state is GameState {
       typeof state.testedWidgets === 'number' &&
       typeof state.packages === 'number' &&
       typeof state.deliveredPackages === 'number'
+}
+
+export const newGameState: GameState = {
+  action: 'idle',
+  money: 200,
+  mood: {
+    overall: 100,
+    r: 0,
+    g: 0,
+    b: 0
+  },
+  unlockedFeatures: {
+    "order-button": true,
+  },
+
+  uncheckedOrders: 0,
+  orders: 0,
+  widgets: 0,
+  testedWidgets: 0,
+  packages: 0,
+  deliveredPackages: 0,
 }
 
 interface Props {
@@ -87,7 +111,11 @@ export default class InGameView extends React.Component<Props, GameState> {
         />
         <Button onClick={this.addOrder} text='Check orders' />
         <FooterArea />
+        <MoodHandler mood={this.state.mood} />
       </div>
     )
   }
 }
+
+
+

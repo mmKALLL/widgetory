@@ -1,10 +1,13 @@
 import React from 'react'
 
-export type Mood = {
-  overall: number
-  r: number
-  g: number
-  b: number
+export type Mood = Color & {
+  overall: number // 0-155 for Overall, 0-100 for RGB values
+}
+
+export type Color = {
+  r: number // 0-255
+  g: number // 0-255
+  b: number // 0-255
 }
 
 interface Props {
@@ -17,17 +20,17 @@ export default class MoodHandler extends React.Component<Props> {
   private TEXT_COLOR_LIGHT: string = '#eee'
 
   // Add overall mood to RGB values
-  private backgroundColor(mood: Mood): Mood {
+  private moodToRGB(mood: Mood): Color {
     return {
-      overall: 0,
       r: mood.overall + mood.r,
       g: mood.overall + mood.g,
       b: mood.overall + mood.b,
     }
   }
 
-  private textColor(mood: Mood): string {
-    if (this.colorBrightness(mood) < this.TEXT_COLOR_SWITCH_THRESHOLD) {
+  // Calculate text color based on background color. Need to provide enough contrast.
+  private textCSSColor(color: Color): string {
+    if (this.colorBrightness(color) < this.TEXT_COLOR_SWITCH_THRESHOLD) {
       return this.TEXT_COLOR_LIGHT
     } else {
       return this.TEXT_COLOR_DARK
@@ -36,23 +39,24 @@ export default class MoodHandler extends React.Component<Props> {
 
   // Return brightness of color in the HSP space; range 0-255.
   // http://alienryderflex.com/hsp.html
-  private colorBrightness(mood: Mood): number {
-    return Math.sqrt(0.299 * mood.r * mood.r + 0.587 * mood.g * mood.g + 0.114 * mood.b * mood.b);
+  private colorBrightness(color: Color): number {
+    return Math.sqrt(0.299 * color.r * color.r + 0.587 * color.g * color.g + 0.114 * color.b * color.b);
   }
 
   // Returns a CSS parseable RGB color.
-  private moodToCSSColor(mood: Mood): string {
-    const r = Math.floor(mood.r)
-    const g = Math.floor(mood.g)
-    const b = Math.floor(mood.b)
+  private colorToCSS(color: Color): string {
+    const r = Math.floor(color.r)
+    const g = Math.floor(color.g)
+    const b = Math.floor(color.b)
     return `rgb(${r},${g},${b})`
   }
 
   render() {
     const mood = this.props.mood
+    const color = this.moodToRGB(mood)
     const elem = document.documentElement
-    const bgCSSColor = this.moodToCSSColor(this.backgroundColor(mood))
-    const textCSSColor = this.textColor(mood)
+    const bgCSSColor = this.colorToCSS(color)
+    const textCSSColor = this.textCSSColor(color)
     elem.style.setProperty("--mood-background-color", bgCSSColor)
     elem.style.setProperty("--mood-text-color", textCSSColor)
 

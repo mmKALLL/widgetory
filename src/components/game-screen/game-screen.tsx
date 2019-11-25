@@ -1,7 +1,7 @@
 import React from 'react'
 import MainMenu from './main-menu/main-menu';
 import Cutscene from './cutscene/cutscene';
-import InGameView, { GameState } from './in-game-view/in-game-view';
+import InGameView, { newGameState } from './in-game-view/in-game-view';
 import { loadGame } from '../../utils/save-file-utils';
 
 type State = {
@@ -60,19 +60,4 @@ export default class GameScreen extends React.Component<{}, State> {
       )
     }
   }
-}
-
-export const newGameState: GameState = {
-  action: 'idle',
-  money: 200,
-  unlockedFeatures: {
-    "order-button": true,
-  },
-
-  uncheckedOrders: 0,
-  orders: 0,
-  widgets: 0,
-  testedWidgets: 0,
-  packages: 0,
-  deliveredPackages: 0,
 }
