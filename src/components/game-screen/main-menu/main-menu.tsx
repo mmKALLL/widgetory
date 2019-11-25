@@ -28,7 +28,7 @@ function MainMenuControls(props: Props) {
         <div className="text-padded">
           {getRandomMantra()}
         </div>
-        <Button className="button ready primary-action-button title-button" onClick={props.startSavedGame} text="Continue building" />
+        <Button className="button primary-action-button title-button" onClick={props.startSavedGame} text="Continue building" />
       </>
     )
   }

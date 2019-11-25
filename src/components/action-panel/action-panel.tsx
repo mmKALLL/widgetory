@@ -10,7 +10,7 @@ interface Props {
 export default function ActionPanel(props: Props) {
   return (
     <>
-      {props.unlockedFeatures['order-button'] && <Button text="Check orders" className="button ready primary-action-button" onClick={() => props.setPlayerAction('check-orders')} />}
+      {props.unlockedFeatures['order-button'] && <Button text="Check orders" className="button primary-action-button" onClick={() => props.setPlayerAction('check-orders')} />}
       {props.unlockedFeatures['build-button'] && <Button text="Build widget" className="button primary-action-button" onClick={() => props.setPlayerAction('build-widget')} />}
     </>
   )

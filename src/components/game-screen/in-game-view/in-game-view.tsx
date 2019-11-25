@@ -44,7 +44,7 @@ export const newGameState: GameState = {
   action: 'idle',
   money: 200,
   mood: {
-    overall: 100,
+    overall: 20,
     r: 0,
     g: 0,
     b: 0
@@ -70,7 +70,7 @@ export default class InGameView extends React.Component<Props, GameState> {
     super(props)
     this.state = props.initialState
 
-    window.setInterval(() => saveGame(this.state), 5000)
+    window.setInterval(() => saveGame(this.state), 10000)
     window.setTimeout(this.addOrder, 13000)
   }
 
