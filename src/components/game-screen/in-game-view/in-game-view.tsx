@@ -216,12 +216,6 @@ const nextState = (state: GameState, _: Props): GameState => {
     }
   }
 
-  // handle waiting when changing actions
-  if (ns.action === 'change-action' && ns.nextAction !== undefined) {
-    if (ns.timeSinceActionStarted >= targetTime) {
-    }
-  }
-
   // check unlocks
   ns.unlockedFeatures = {
     ...ns.unlockedFeatures
