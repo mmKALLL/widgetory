@@ -22,7 +22,7 @@ export type GameState = {
   widgets: number
   testedWidgets: number
   packages: number
-  deliveredPackages: number
+  completedOrders: number
 
   timeSinceActionStarted: number
   actionSwitchTime: number // delay between actions to cater for context switch, 'preparing to check orders'
@@ -85,7 +85,7 @@ export const newGameState: GameState = {
   widgets: 0,
   testedWidgets: 0,
   packages: 0,
-  deliveredPackages: 0,
+  completedOrders: 0,
 
   timeSinceActionStarted: 0,
   actionSwitchTime: 2000,
@@ -146,7 +146,7 @@ export default class InGameView extends React.Component<Props, GameState> {
         { DEBUG && <div>Widgets: {this.state.widgets}</div> }
         { DEBUG && <div>Tested widgets: {this.state.testedWidgets}</div> }
         { DEBUG && <div>Packages: {this.state.packages}</div> }
-        { DEBUG && <div>Orders fulfilled: {this.state.deliveredPackages}</div> }
+        { DEBUG && <div>Orders fulfilled: {this.state.completedOrders}</div> }
         { DEBUG && <br /> }
         { DEBUG && <div>widgetPartPrice: {this.state.widgetPartPrice}</div> }
         { DEBUG && <div>widgetPrice: {this.state.widgetPrice}</div> }
@@ -157,6 +157,12 @@ export default class InGameView extends React.Component<Props, GameState> {
         <ActionDescriptionText currentAction={this.state.action} />
         <ActionPanel
           orders={this.state.orders}
+          parts={this.state.widgetParts}
+          widgets={this.state.widgets}
+          testedWidgets={this.state.testedWidgets}
+          packages={this.state.packages}
+          completedOrders={this.state.completedOrders}
+
           setPlayerAction={this.setPlayerAction}
           unlockedFeatures={this.state.unlockedFeatures}
         />
@@ -178,7 +184,7 @@ const nextState = (state: GameState, _: Props): GameState => {
   ns.timeToNextOrder -= 1000 / FPS
   if (ns.timeToNextOrder < 0) {
     ns.uncheckedOrders += 1
-    ns.timeToNextOrder = newOrderTime(ns.deliveredPackages)
+    ns.timeToNextOrder = newOrderTime(ns.completedOrders)
   }
 
   // handle other actions
@@ -210,8 +216,8 @@ const nextState = (state: GameState, _: Props): GameState => {
           console.log(`delivering ${numberDelivered} packages`)
 
           ns.orders -= numberDelivered
-          ns.deliveredPackages += numberDelivered
-          ns.timeUntilOrderCancel += newOrderTime(ns.deliveredPackages) * numberDelivered
+          ns.completedOrders += numberDelivered
+          ns.timeUntilOrderCancel += newOrderTime(ns.completedOrders) * numberDelivered
           ns.packages = 0
 
           ns.widgetPrice -= numberDelivered
@@ -238,7 +244,7 @@ const nextState = (state: GameState, _: Props): GameState => {
   }
 
   // Randomly change the market situation; proportional ease over time towards magic constants, with random multipliers
-  if (Math.random() < 1 / (ns.deliveredPackages / 10 + 1000)) {
+  if (Math.random() < 1 / (ns.completedOrders / 10 + 1000)) {
     ns.widgetPrice += Math.floor((Math.random() - 0.3) * ((8457 - ns.widgetPrice) / 100))
   }
   if (Math.random() < 1 / (ns.widgetParts + 1000)) {
