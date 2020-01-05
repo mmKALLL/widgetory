@@ -97,8 +97,8 @@ export const newGameState: GameState = {
 
   widgetPrice: 1400,
   widgetPartPrice: 850,
-  timeUntilOrderCancel: 300000,
-  defaultTimeUntilOrderCancel: 300000,
+  timeUntilOrderCancel: 120000,
+  defaultTimeUntilOrderCancel: 120000,
 }
 
 interface Props {
@@ -216,6 +216,21 @@ const nextState = (state: GameState, _: Props): GameState => {
     }
   }
 
+  // update cancellations
+  ns.timeUntilOrderCancel -= 1000 / FPS
+  if (ns.timeUntilOrderCancel < 0) {
+    ns.orders -= 1
+    ns.timeUntilOrderCancel = ns.defaultTimeUntilOrderCancel
+  }
+
+  // Randomly change the market situation; proportional ease over time towards magic constants, with random multipliers
+  if (Math.random() < 1 / (ns.deliveredPackages / 10 + 1000)) {
+    ns.widgetPrice += Math.floor((Math.random() - 0.3) * ((8457 - ns.widgetPrice) / 100))
+  }
+  if (Math.random() < 1 / (ns.widgetParts + 1000)) {
+    ns.widgetPartPrice -= Math.floor((Math.random() - 0.3) * ((128 + ns.widgetPartPrice) / 100))
+  }
+
   // check unlocks
   ns.unlockedFeatures = {
     ...ns.unlockedFeatures
@@ -225,6 +240,7 @@ const nextState = (state: GameState, _: Props): GameState => {
   if (ns.testedWidgets > 0) { ns.unlockedFeatures["package-button"] = true }
   if (ns.packages > 0) { ns.unlockedFeatures["deliver-button"] = true }
   if (ns.widgetParts === 0) { ns.unlockedFeatures["purchase-parts-button"] = true }
+
   return ns
 }
 
