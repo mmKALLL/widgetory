@@ -185,6 +185,7 @@ const nextState = (state: GameState, _: Props): GameState => {
           ns.orders += ns.uncheckedOrders
           ns.money += ns.uncheckedOrders * ns.widgetPrice
           ns.uncheckedOrders = 0
+          ns.action = 'idle'
           break
         case 'build-widget':
           ns.widgets += 1
@@ -208,6 +209,8 @@ const nextState = (state: GameState, _: Props): GameState => {
           ns.packages -= numberDelivered
 
           ns.widgetPrice -= numberDelivered
+
+          ns.action = 'idle'
           break
 
         default:
