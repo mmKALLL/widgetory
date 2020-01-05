@@ -101,7 +101,9 @@ export default class InGameView extends React.Component<Props, GameState> {
 
   setPlayerAction = (newAction: PlayerAction): void => {
     this.setState({
-      action: newAction
+      action: 'change-action',
+      nextAction: newAction,
+      timeSinceActionStarted: 0
     })
   }
 
@@ -148,9 +150,24 @@ const nextState = (state: GameState, _: Props): GameState => {
     ns.uncheckedOrders = 0
   }
 
-  // handle other actions
-  if (ns.action === 'build-widget' || ns.action === 'test-widget' || ns.action === 'package-widget' || ns.action === 'deliver-package') {
 
+  // handle other actions
+  ns.timeSinceActionStarted += 1000 / FPS
+  if (ns.action === 'build-widget' || ns.action === 'test-widget' || ns.action === 'package-widget' || ns.action === 'deliver-package') {
+    // TODO
+    switch (ns.action) {
+      default:
+
+    }
+  }
+
+  // handle waiting when changing actions
+  if (ns.action === 'change-action' && ns.nextAction !== undefined) {
+    if (ns.timeSinceActionStarted >= ns.actionSwitchTime) {
+      ns.action = ns.nextAction
+      ns.nextAction = undefined
+      ns.timeSinceActionStarted = 0
+    }
   }
 
   // check unlocks
