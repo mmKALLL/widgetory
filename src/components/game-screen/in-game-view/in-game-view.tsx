@@ -14,6 +14,7 @@ export type GameState = {
   mood: Mood
   unlockedFeatures: { [key in FeatureName]?: boolean }
 
+  timeToNextOrder: number // time to add an unchecked order in milliseconds
   uncheckedOrders: number
   orders: number
   widgets: number
@@ -56,6 +57,7 @@ export const newGameState: GameState = {
     "order-button": true,
   },
 
+  timeToNextOrder: 13000,
   uncheckedOrders: 0,
   orders: 0,
   widgets: 0,
@@ -73,9 +75,8 @@ export default class InGameView extends React.Component<Props, GameState> {
     super(props)
     this.state = props.initialState
 
-    window.setInterval(this.updateGameState, 20)
+    window.setInterval(this.updateGameState, 1000 / FPS)
     window.setInterval(() => saveGame(this.state), 10000)
-    window.setTimeout(this.addOrder, 13000)
   }
 
   addOrder = () => {
@@ -103,8 +104,22 @@ export default class InGameView extends React.Component<Props, GameState> {
   }
 
   updateGameState = (): void => {
-    const newState = nextState(this.state)
-    this.setState(newState)
+    this.setState(this.nextState)
+  }
+
+  nextState = (state: GameState, props: Props): GameState => {
+    const ns: GameState = { ...state } // newState; shallow copy
+    ns.money += 1
+    ns.timeToNextOrder -= 1000 / FPS
+    if (ns.timeToNextOrder < 0) {
+      ns.uncheckedOrders += 1
+      ns.timeToNextOrder = this.newOrderTime()
+    }
+    if (ns.action === 'check-orders') {
+      ns.orders += ns.uncheckedOrders
+      ns.uncheckedOrders = 0
+    }
+    return ns
   }
 
   render() {
@@ -126,11 +141,5 @@ export default class InGameView extends React.Component<Props, GameState> {
       </div>
     )
   }
-}
-
-const nextState = (state: GameState): GameState => {
-  const newState = state
-  newState.money += 1
-  return state
 }
 
