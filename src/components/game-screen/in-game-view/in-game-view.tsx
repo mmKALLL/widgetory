@@ -37,32 +37,12 @@ export type GameState = {
   widgetPrice: number
   widgetPartPrice: number
   timeUntilOrderCancel: number
-  defaultTimeUntilOrderCancel: number
 }
 
 // action names other than 'idle' should have a verb and noun, in imperative and base singular/plural form
 export type PlayerAction = 'idle' | 'change-action' | 'check-orders' | 'build-widget' | 'test-widget' | 'package-widget' | 'deliver-packages' | 'purchase-parts'
 
 export type FeatureName = 'order-button' | 'build-button' | 'test-button' | 'package-button' | 'deliver-button' | 'purchase-parts-button'
-
-export function isGameState(state: any): state is GameState {
-  return state !== undefined &&
-      state !== null &&
-
-      typeof state.action === 'string' &&
-      typeof state.money === 'number' &&
-      typeof state.mood === 'object' &&
-      typeof state.unlockedFeatures === 'object' &&
-
-      typeof state.uncheckedOrders === 'number' &&
-      typeof state.orders === 'number' &&
-      typeof state.widgets === 'number' &&
-      typeof state.testedWidgets === 'number' &&
-      typeof state.packages === 'number' &&
-      typeof state.deliveredPackages === 'number'
-
-      // TODO: Add new properties here
-}
 
 export const newGameState: GameState = {
   action: 'idle',
@@ -100,7 +80,6 @@ export const newGameState: GameState = {
   widgetPrice: 1400,
   widgetPartPrice: 850,
   timeUntilOrderCancel: 120000,
-  defaultTimeUntilOrderCancel: 120000,
 }
 
 interface Props {
@@ -150,7 +129,7 @@ export default class InGameView extends React.Component<Props, GameState> {
         { DEBUG && <br /> }
         { DEBUG && <div>widgetPartPrice: {this.state.widgetPartPrice}</div> }
         { DEBUG && <div>widgetPrice: {this.state.widgetPrice}</div> }
-        { DEBUG && <div>timeUntilOrderCancel: {this.state.timeUntilOrderCancel}</div> }
+        { DEBUG && <div>timeUntilOrderCancel: {Math.floor(this.state.timeUntilOrderCancel / 1000)} sec</div> }
         {/* { DEBUG && <div>unlockedFeatures: {Object.entries(this.state.unlockedFeatures).join(', ')}</div> } */}
 
 
@@ -196,7 +175,13 @@ const nextState = (state: GameState, _: Props): GameState => {
     if (ns.timeSinceActionStarted >= targetTime) {
       ns.timeSinceActionStarted -= targetTime
       switch (ns.action) {
+        case 'change-action':
+          ns.action = ns.nextAction !== undefined ? ns.nextAction : 'idle'
+          ns.nextAction = undefined
+          ns.timeSinceActionStarted = 0
+          break
         case 'check-orders':
+          console.log(`got ${ns.uncheckedOrders} new orders, received ${ns.uncheckedOrders * ns.widgetPrice} yen`)
           ns.orders += ns.uncheckedOrders
           ns.money += ns.uncheckedOrders * ns.widgetPrice
           ns.uncheckedOrders = 0
@@ -220,15 +205,9 @@ const nextState = (state: GameState, _: Props): GameState => {
           ns.orders -= numberDelivered
           ns.completedOrders += numberDelivered
           ns.timeUntilOrderCancel += newOrderTime(ns.completedOrders) * numberDelivered
-          ns.packages = 0
+          ns.packages -= numberDelivered
 
           ns.widgetPrice -= numberDelivered
-          break
-
-        case 'change-action':
-          ns.action = ns.nextAction !== undefined ? ns.nextAction : 'idle'
-          ns.nextAction = undefined
-          ns.timeSinceActionStarted = 0
           break
 
         default:
@@ -240,9 +219,15 @@ const nextState = (state: GameState, _: Props): GameState => {
   // update cancellations
   ns.timeUntilOrderCancel -= 1000 / FPS
   if (ns.timeUntilOrderCancel < 0) {
-    ns.orders > 0 ? ns.orders -= 1 : ns.uncheckedOrders -= 1
-    ns.timeUntilOrderCancel = ns.defaultTimeUntilOrderCancel
-    console.log(`cancelled order, ${ns.orders} checked and ${ns.uncheckedOrders} unchecked left`)
+    if (ns.orders > 0) {
+      ns.orders -= 1
+      ns.money -= ns.widgetPrice
+      console.log(`cancelled order, lost ${ns.widgetPrice} yen, ${ns.orders} checked and ${ns.uncheckedOrders} unchecked left`)
+    } else {
+      ns.uncheckedOrders -= 1
+      console.log(`cancelled unchecked order, lost no yen, ${ns.orders} checked and ${ns.uncheckedOrders} unchecked left`)
+    }
+    ns.timeUntilOrderCancel = newTimeUntilOrderCancel(ns.completedOrders)
   }
 
   // Randomly change the market situation; proportional ease over time towards magic constants, with random multipliers
@@ -268,7 +253,11 @@ const nextState = (state: GameState, _: Props): GameState => {
 
 // Return time between orders in milliseconds
 const newOrderTime = (deliveredPackages: number): number => {
-  return 300000 / (deliveredPackages + 10)
+  return 30 * 1000 * 40 / (deliveredPackages + 40)
+}
+
+const newTimeUntilOrderCancel = (deliveredPackages: number): number => {
+  return 120 * 1000 * 10000 / (deliveredPackages + 10000) // ~120s until lategame
 }
 
 const getActionTargetTime = (state: GameState): number => {
@@ -280,7 +269,7 @@ const getActionTargetTime = (state: GameState): number => {
     case 'deliver-packages': return state.packageDeliveryTime
     case 'change-action': return state.actionSwitchTime
     default:
-      return 1000000000
+      return 10000000000
   }
 }
 
