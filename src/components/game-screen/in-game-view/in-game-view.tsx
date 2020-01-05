@@ -21,9 +21,18 @@ export type GameState = {
   testedWidgets: number
   packages: number
   deliveredPackages: number
+
+  timeSinceActionStarted: number
+  actionSwitchTime: number // delay between actions to cater for context switch, 'preparing to check orders'
+  nextAction: PlayerAction | undefined
+
+  widgetBuildTime: number
+  widgetTestTime: number
+  widgetPackageTime: number
+  packageDeliveryTime: number
 }
 
-export type PlayerAction = 'idle' | 'check-orders' | 'build-widget' | 'test-widget' | 'package-widget' | 'deliver-package'
+export type PlayerAction = 'idle' | 'check-orders' | 'build-widget' | 'test-widget' | 'package-widget' | 'deliver-package' | 'change-action'
 
 export type FeatureName = 'order-button' | 'build-button' | 'test-button' | 'package-button' | 'deliver-button'
 
@@ -42,6 +51,8 @@ export function isGameState(state: any): state is GameState {
       typeof state.testedWidgets === 'number' &&
       typeof state.packages === 'number' &&
       typeof state.deliveredPackages === 'number'
+
+      // TODO: Add new properties here
 }
 
 export const newGameState: GameState = {
@@ -64,6 +75,15 @@ export const newGameState: GameState = {
   testedWidgets: 0,
   packages: 0,
   deliveredPackages: 0,
+
+  timeSinceActionStarted: 0,
+  actionSwitchTime: 2000,
+  nextAction: undefined,
+
+  widgetBuildTime: 7000,
+  widgetTestTime: 3000,
+  widgetPackageTime: 1000, // can package without testing
+  packageDeliveryTime: 8000,
 }
 
 interface Props {
