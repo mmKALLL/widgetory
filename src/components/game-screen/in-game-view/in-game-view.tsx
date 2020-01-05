@@ -17,6 +17,8 @@ export type GameState = {
   timeToNextOrder: number // time to add an unchecked order in milliseconds
   uncheckedOrders: number
   orders: number
+
+  widgetParts: number
   widgets: number
   testedWidgets: number
   packages: number
@@ -30,8 +32,13 @@ export type GameState = {
   widgetTestTime: number
   widgetPackageTime: number
   packageDeliveryTime: number
+
+  widgetPrice: number
+  widgetPartPrice: number
+  timeUntilOrderCancel: number
 }
 
+// action names other than 'idle' should have a verb and noun, both in base form (ignore plural, tense, etc)
 export type PlayerAction = 'idle' | 'check-orders' | 'build-widget' | 'test-widget' | 'package-widget' | 'deliver-package' | 'change-action'
 
 export type FeatureName = 'order-button' | 'build-button' | 'test-button' | 'package-button' | 'deliver-button'
@@ -57,7 +64,7 @@ export function isGameState(state: any): state is GameState {
 
 export const newGameState: GameState = {
   action: 'idle',
-  money: 200,
+  money: 40000, // in something similar to 2019 yen - i.e. USD 0.01
   mood: {
     overall: 20,
     r: 0,
@@ -71,6 +78,8 @@ export const newGameState: GameState = {
   timeToNextOrder: 13000,
   uncheckedOrders: 0,
   orders: 0,
+
+  widgetParts: 10,
   widgets: 0,
   testedWidgets: 0,
   packages: 0,
@@ -83,7 +92,11 @@ export const newGameState: GameState = {
   widgetBuildTime: 7000,
   widgetTestTime: 3000,
   widgetPackageTime: 1000, // can package without testing
-  packageDeliveryTime: 8000,
+  packageDeliveryTime: 12000,
+
+  widgetPrice: 1400,
+  widgetPartPrice: 850,
+  timeUntilOrderCancel: 300000,
 }
 
 interface Props {
@@ -147,23 +160,50 @@ const nextState = (state: GameState, _: Props): GameState => {
   }
   if (ns.action === 'check-orders') {
     ns.orders += ns.uncheckedOrders
+    ns.money += ns.uncheckedOrders * ns.widgetPrice
     ns.uncheckedOrders = 0
   }
 
 
   // handle other actions
   ns.timeSinceActionStarted += 1000 / FPS
+  const targetTime = getActionTargetTime(ns)
   if (ns.action === 'build-widget' || ns.action === 'test-widget' || ns.action === 'package-widget' || ns.action === 'deliver-package') {
-    // TODO
-    switch (ns.action) {
-      default:
+    if (ns.timeSinceActionStarted >= targetTime) {
+      ns.timeSinceActionStarted -= targetTime
+      switch (ns.action) {
+        case 'build-widget':
+          ns.widgets += 1
+          ns.widgetParts -= 1
+          break
+        case 'test-widget':
+          ns.testedWidgets += 1
+          ns.widgets -= 1
+          break
+        case 'package-widget':
+          ns.packages += 1
+          ns.testedWidgets -= 1
+          break
+        case 'deliver-package':
+          const numberDelivered = Math.min(ns.orders, ns.packages)
 
+          ns.money += ns.widgetPrice * numberDelivered
+          ns.deliveredPackages += numberDelivered
+          ns.timeUntilOrderCancel += newOrderTime(ns.deliveredPackages) * numberDelivered
+          ns.packages = 0
+
+          ns.widgetPrice -= numberDelivered
+          break
+
+        default:
+
+      }
     }
   }
 
   // handle waiting when changing actions
   if (ns.action === 'change-action' && ns.nextAction !== undefined) {
-    if (ns.timeSinceActionStarted >= ns.actionSwitchTime) {
+    if (ns.timeSinceActionStarted >= targetTime) {
       ns.action = ns.nextAction
       ns.nextAction = undefined
       ns.timeSinceActionStarted = 0
@@ -178,10 +218,23 @@ const nextState = (state: GameState, _: Props): GameState => {
   if (ns.widgets > 0) { ns.unlockedFeatures["test-button"] = true }
   if (ns.testedWidgets > 0) { ns.unlockedFeatures["package-button"] = true }
   if (ns.packages > 0) { ns.unlockedFeatures["deliver-button"] = true }
+  if (ns.widgetParts === 0) { ns.unlockedFeatures["purchase-button"] = true }
   return ns
 }
 
 // Return time between orders in milliseconds
 const newOrderTime = (deliveredPackages: number): number => {
   return 300000 / (deliveredPackages + 10)
+}
+
+const getActionTargetTime = (state: GameState): number => {
+  switch (state.action) {
+    case 'build-widget': return state.widgetBuildTime
+    case 'test-widget': return state.widgetTestTime
+    case 'package-widget': return state.widgetPackageTime
+    case 'deliver-package': return state.packageDeliveryTime
+    case 'change-action': return state.actionSwitchTime
+    default:
+      return 1000000000
+  }
 }
