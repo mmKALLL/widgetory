@@ -1,4 +1,4 @@
-import { GameState, isGameState, newGameState } from "../components/game-screen/in-game-view/in-game-view";
+import { GameState, newGameState } from "../components/game-screen/in-game-view/in-game-view";
 
 const itemName = 'saveFile01'
 
@@ -42,4 +42,23 @@ export function deleteSaveFileWithConfirm(): void {
       window.location.reload()
     }
   }
+}
+
+export function isGameState(state: any): state is GameState {
+  return state !== undefined &&
+      state !== null &&
+
+      typeof state.action === 'string' &&
+      typeof state.money === 'number' &&
+      typeof state.mood === 'object' &&
+      typeof state.unlockedFeatures === 'object' &&
+
+      typeof state.uncheckedOrders === 'number' &&
+      typeof state.orders === 'number' &&
+      typeof state.widgets === 'number' &&
+      typeof state.testedWidgets === 'number' &&
+      typeof state.packages === 'number' &&
+      typeof state.completedOrders === 'number'
+
+      // TODO: Add new properties here
 }
