@@ -42,7 +42,7 @@ export type GameState = {
 // action names other than 'idle' should have a verb and noun, both in base form (ignore plural, tense, etc)
 export type PlayerAction = 'idle' | 'check-orders' | 'build-widget' | 'test-widget' | 'package-widget' | 'deliver-package' | 'change-action'
 
-export type FeatureName = 'order-button' | 'build-button' | 'test-button' | 'package-button' | 'deliver-button'
+export type FeatureName = 'order-button' | 'build-button' | 'test-button' | 'package-button' | 'deliver-button' | 'purchase-parts-button'
 
 export function isGameState(state: any): state is GameState {
   return state !== undefined &&
@@ -224,7 +224,7 @@ const nextState = (state: GameState, _: Props): GameState => {
   if (ns.widgets > 0) { ns.unlockedFeatures["test-button"] = true }
   if (ns.testedWidgets > 0) { ns.unlockedFeatures["package-button"] = true }
   if (ns.packages > 0) { ns.unlockedFeatures["deliver-button"] = true }
-  if (ns.widgetParts === 0) { ns.unlockedFeatures["purchase-button"] = true }
+  if (ns.widgetParts === 0) { ns.unlockedFeatures["purchase-parts-button"] = true }
   return ns
 }
 
