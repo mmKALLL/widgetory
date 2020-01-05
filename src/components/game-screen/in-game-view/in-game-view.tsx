@@ -40,8 +40,8 @@ export type GameState = {
   defaultTimeUntilOrderCancel: number
 }
 
-// action names other than 'idle' should have a verb and noun, both in base form (ignore plural, tense, etc)
-export type PlayerAction = 'idle' | 'check-orders' | 'build-widget' | 'test-widget' | 'package-widget' | 'deliver-package' | 'change-action'
+// action names other than 'idle' should have a verb and noun, in imperative and base singular/plural form
+export type PlayerAction = 'idle' | 'change-action' | 'check-orders' | 'build-widget' | 'test-widget' | 'package-widget' | 'deliver-packages' | 'purchase-parts'
 
 export type FeatureName = 'order-button' | 'build-button' | 'test-button' | 'package-button' | 'deliver-button' | 'purchase-parts-button'
 
@@ -184,7 +184,7 @@ const nextState = (state: GameState, _: Props): GameState => {
   // handle other actions
   ns.timeSinceActionStarted += 1000 / FPS
   const targetTime = getActionTargetTime(ns)
-  if (ns.action === 'check-orders' || ns.action === 'build-widget' || ns.action === 'test-widget' || ns.action === 'package-widget' || ns.action === 'deliver-package' || ns.action === 'change-action') {
+  if (ns.action === 'check-orders' || ns.action === 'build-widget' || ns.action === 'test-widget' || ns.action === 'package-widget' || ns.action === 'deliver-packages' || ns.action === 'change-action') {
     if (ns.timeSinceActionStarted >= targetTime) {
       ns.timeSinceActionStarted -= targetTime
       switch (ns.action) {
@@ -205,7 +205,7 @@ const nextState = (state: GameState, _: Props): GameState => {
           ns.packages += 1
           ns.testedWidgets -= 1
           break
-        case 'deliver-package':
+        case 'deliver-packages':
           const numberDelivered = Math.min(ns.orders, ns.packages)
           console.log(`delivering ${numberDelivered} packages`)
 
@@ -269,7 +269,7 @@ const getActionTargetTime = (state: GameState): number => {
     case 'build-widget': return state.widgetBuildTime
     case 'test-widget': return state.widgetTestTime
     case 'package-widget': return state.widgetPackageTime
-    case 'deliver-package': return state.packageDeliveryTime
+    case 'deliver-packages': return state.packageDeliveryTime
     case 'change-action': return state.actionSwitchTime
     default:
       return 1000000000
