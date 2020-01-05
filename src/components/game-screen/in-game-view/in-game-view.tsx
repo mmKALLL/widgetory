@@ -165,7 +165,7 @@ export default class InGameView extends React.Component<Props, GameState> {
       <div className='game-container'>
         { DEBUG && <div>Current action: {this.state.action}</div> }
         <div>Money: {this.state.money}</div>
-        <div>Orders: {this.state.orders}</div>
+        { DEBUG && <div>Orders: {this.state.orders}</div> }
         { DEBUG && <div>unlockedFeatures: {Object.entries(this.state.unlockedFeatures).join(', ')}</div> }
 
         <ActionDescriptionText currentAction={this.state.action} />
