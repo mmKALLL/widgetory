@@ -1,7 +1,6 @@
 import React from 'react'
 import FooterArea from '../../footer-area/footer-area';
 import { saveGame } from '../../../utils/save-file-utils';
-import Button from '../../button/button';
 import ActionPanel from '../../action-panel/action-panel';
 import MoodHandler, { Mood } from '../../mood-handler/mood-handler';
 import ActionDescriptionText from '../../action-description-text/action-description-text';
