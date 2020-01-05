@@ -231,7 +231,7 @@ const nextState = (state: GameState, _: Props): GameState => {
   }
 
   // Randomly change the market situation; proportional ease over time towards magic constants, with random multipliers
-  if (Math.random() < 1 / (ns.completedOrders / 10 + 1000)) {
+  if (Math.random() < 1 / (ns.completedOrders / 1000 + 1000)) {
     ns.widgetPrice += Math.floor((Math.random() - 0.3) * ((8457 - ns.widgetPrice) / 100))
   }
   if (Math.random() < 1 / (ns.widgetParts + 1000)) {
