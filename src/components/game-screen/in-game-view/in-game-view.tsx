@@ -99,24 +99,6 @@ export default class InGameView extends React.Component<Props, GameState> {
     window.setInterval(() => saveGame(this.state), 10000)
   }
 
-  addOrder = () => {
-    this.setState((prevState, _) => {
-      return {
-        orders: prevState.orders + 1,
-        unlockedFeatures: {
-          ...prevState.unlockedFeatures,
-          "build-button": true
-        }
-      }
-    })
-    window.setTimeout(this.addOrder, this.newOrderTime())
-  }
-
-  // Return time between orders in milliseconds
-  newOrderTime = (): number => {
-    return 300000 / (this.state.deliveredPackages + 10)
-  }
-
   setPlayerAction = (newAction: PlayerAction): void => {
     this.setState({
       action: newAction
@@ -124,40 +106,7 @@ export default class InGameView extends React.Component<Props, GameState> {
   }
 
   updateGameState = (): void => {
-    this.setState(this.nextState)
-  }
-
-  nextState = (state: GameState, props: Props): GameState => {
-    const ns: GameState = { ...state } // newState; shallow copy
-
-    // update general stuff
-    ns.money += 1
-
-    // update orders
-    ns.timeToNextOrder -= 1000 / FPS
-    if (ns.timeToNextOrder < 0) {
-      ns.uncheckedOrders += 1
-      ns.timeToNextOrder = this.newOrderTime()
-    }
-    if (ns.action === 'check-orders') {
-      ns.orders += ns.uncheckedOrders
-      ns.uncheckedOrders = 0
-    }
-
-    // handle other actions
-    if (ns.action === 'build-widget' || ns.action === 'test-widget' || ns.action === 'package-widget' || ns.action === 'deliver-package') {
-
-    }
-
-    // check unlocks
-    ns.unlockedFeatures = {
-      ...ns.unlockedFeatures
-    }
-    if (ns.orders > 0) { ns.unlockedFeatures["build-button"] = true }
-    if (ns.widgets > 0) { ns.unlockedFeatures["test-button"] = true }
-    if (ns.testedWidgets > 0) { ns.unlockedFeatures["package-button"] = true }
-    if (ns.packages > 0) { ns.unlockedFeatures["deliver-button"] = true }
-    return ns
+    this.setState(nextState)
   }
 
   render() {
@@ -181,3 +130,41 @@ export default class InGameView extends React.Component<Props, GameState> {
   }
 }
 
+// create and return the next GameState based on the current one
+const nextState = (state: GameState, _: Props): GameState => {
+  const ns: GameState = { ...state } // newState; shallow copy
+
+  // update general stuff
+  ns.money += 1
+
+  // update orders
+  ns.timeToNextOrder -= 1000 / FPS
+  if (ns.timeToNextOrder < 0) {
+    ns.uncheckedOrders += 1
+    ns.timeToNextOrder = newOrderTime(ns.deliveredPackages)
+  }
+  if (ns.action === 'check-orders') {
+    ns.orders += ns.uncheckedOrders
+    ns.uncheckedOrders = 0
+  }
+
+  // handle other actions
+  if (ns.action === 'build-widget' || ns.action === 'test-widget' || ns.action === 'package-widget' || ns.action === 'deliver-package') {
+
+  }
+
+  // check unlocks
+  ns.unlockedFeatures = {
+    ...ns.unlockedFeatures
+  }
+  if (ns.orders > 0) { ns.unlockedFeatures["build-button"] = true }
+  if (ns.widgets > 0) { ns.unlockedFeatures["test-button"] = true }
+  if (ns.testedWidgets > 0) { ns.unlockedFeatures["package-button"] = true }
+  if (ns.packages > 0) { ns.unlockedFeatures["deliver-button"] = true }
+  return ns
+}
+
+// Return time between orders in milliseconds
+const newOrderTime = (deliveredPackages: number): number => {
+  return 300000 / (deliveredPackages + 10)
+}
