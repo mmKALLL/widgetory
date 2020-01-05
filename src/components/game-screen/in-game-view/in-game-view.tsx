@@ -4,6 +4,7 @@ import { saveGame } from '../../../utils/save-file-utils';
 import Button from '../../button/button';
 import ActionPanel from '../../action-panel/action-panel';
 import MoodHandler, { Mood } from '../../mood-handler/mood-handler';
+import ActionDescriptionText from '../../action-description-text/action-description-text';
 
 export type GameState = {
   action: PlayerAction
@@ -70,6 +71,7 @@ export default class InGameView extends React.Component<Props, GameState> {
     super(props)
     this.state = props.initialState
 
+    window.setInterval(this.updateGameState, 20)
     window.setInterval(() => saveGame(this.state), 10000)
     window.setTimeout(this.addOrder, 13000)
   }
@@ -98,6 +100,11 @@ export default class InGameView extends React.Component<Props, GameState> {
     })
   }
 
+  updateGameState = (): void => {
+    const newState = nextState(this.state)
+    this.setState(newState)
+  }
+
   render() {
     return (
       <div className='game-container'>
@@ -105,11 +112,12 @@ export default class InGameView extends React.Component<Props, GameState> {
         <div>Money: {this.state.money}</div>
         <div>unlockedFeatures: {Object.entries(this.state.unlockedFeatures).join(', ')}</div>
 
+        <ActionDescriptionText currentAction={this.state.action} />
         <ActionPanel
-            setPlayerAction={this.setPlayerAction}
-            unlockedFeatures={this.state.unlockedFeatures}
+          orders={this.state.orders}
+          setPlayerAction={this.setPlayerAction}
+          unlockedFeatures={this.state.unlockedFeatures}
         />
-        <Button onClick={this.addOrder} text='Check orders' />
         <FooterArea />
         <MoodHandler mood={this.state.mood} />
       </div>
@@ -117,5 +125,9 @@ export default class InGameView extends React.Component<Props, GameState> {
   }
 }
 
-
+const nextState = (state: GameState): GameState => {
+  const newState = state
+  newState.money += 1
+  return state
+}
 
