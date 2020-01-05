@@ -28,6 +28,7 @@ export type GameState = {
   actionSwitchTime: number // delay between actions to cater for context switch, 'preparing to check orders'
   nextAction: PlayerAction | undefined
 
+  checkOrderTime: number
   widgetBuildTime: number
   widgetTestTime: number
   widgetPackageTime: number
@@ -90,6 +91,7 @@ export const newGameState: GameState = {
   actionSwitchTime: 2000,
   nextAction: undefined,
 
+  checkOrderTime: 3000,
   widgetBuildTime: 7000,
   widgetTestTime: 3000,
   widgetPackageTime: 1000, // can package without testing
@@ -169,8 +171,8 @@ export default class InGameView extends React.Component<Props, GameState> {
 const nextState = (state: GameState, _: Props): GameState => {
   const ns: GameState = { ...state } // newState; shallow copy
 
-  // update general stuff
-  ns.money += 1
+  // update mood
+  // TODO
 
   // update orders
   ns.timeToNextOrder -= 1000 / FPS
@@ -178,20 +180,19 @@ const nextState = (state: GameState, _: Props): GameState => {
     ns.uncheckedOrders += 1
     ns.timeToNextOrder = newOrderTime(ns.deliveredPackages)
   }
-  if (ns.action === 'check-orders') {
-    ns.orders += ns.uncheckedOrders
-    ns.money += ns.uncheckedOrders * ns.widgetPrice
-    ns.uncheckedOrders = 0
-  }
-
 
   // handle other actions
   ns.timeSinceActionStarted += 1000 / FPS
   const targetTime = getActionTargetTime(ns)
-  if (ns.action === 'build-widget' || ns.action === 'test-widget' || ns.action === 'package-widget' || ns.action === 'deliver-package' || ns.action === 'change-action') {
+  if (ns.action === 'check-orders' || ns.action === 'build-widget' || ns.action === 'test-widget' || ns.action === 'package-widget' || ns.action === 'deliver-package' || ns.action === 'change-action') {
     if (ns.timeSinceActionStarted >= targetTime) {
       ns.timeSinceActionStarted -= targetTime
       switch (ns.action) {
+        case 'check-orders':
+          ns.orders += ns.uncheckedOrders
+          ns.money += ns.uncheckedOrders * ns.widgetPrice
+          ns.uncheckedOrders = 0
+          break
         case 'build-widget':
           ns.widgets += 1
           ns.widgetParts -= 1
@@ -206,6 +207,7 @@ const nextState = (state: GameState, _: Props): GameState => {
           break
         case 'deliver-package':
           const numberDelivered = Math.min(ns.orders, ns.packages)
+          console.log(`delivering ${numberDelivered} packages`)
 
           ns.orders -= numberDelivered
           ns.deliveredPackages += numberDelivered
@@ -230,8 +232,9 @@ const nextState = (state: GameState, _: Props): GameState => {
   // update cancellations
   ns.timeUntilOrderCancel -= 1000 / FPS
   if (ns.timeUntilOrderCancel < 0) {
-    ns.orders -= 1
+    ns.orders > 0 ? ns.orders -= 1 : ns.uncheckedOrders -= 1
     ns.timeUntilOrderCancel = ns.defaultTimeUntilOrderCancel
+    console.log(`cancelled order, ${ns.orders} checked and ${ns.uncheckedOrders} unchecked left`)
   }
 
   // Randomly change the market situation; proportional ease over time towards magic constants, with random multipliers
@@ -262,6 +265,7 @@ const newOrderTime = (deliveredPackages: number): number => {
 
 const getActionTargetTime = (state: GameState): number => {
   switch (state.action) {
+    case 'check-orders': return state.checkOrderTime
     case 'build-widget': return state.widgetBuildTime
     case 'test-widget': return state.widgetTestTime
     case 'package-widget': return state.widgetPackageTime
@@ -271,3 +275,4 @@ const getActionTargetTime = (state: GameState): number => {
       return 1000000000
   }
 }
+
