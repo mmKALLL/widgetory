@@ -137,9 +137,20 @@ export default class InGameView extends React.Component<Props, GameState> {
     return (
       <div className='game-container'>
         { DEBUG && <div>Current action: {this.state.action}</div> }
+        { DEBUG && <div>Action complete: {Math.floor(this.state.timeSinceActionStarted / getActionTargetTime(this.state) * 100)}% ({Math.floor((getActionTargetTime(this.state) - this.state.timeSinceActionStarted) / 1000)} sec)</div> }
         <div>Money: {this.state.money}</div>
+        { DEBUG && <div>Parts: {this.state.widgetParts}</div> }
         { DEBUG && <div>Orders: {this.state.orders}</div> }
-        { DEBUG && <div>unlockedFeatures: {Object.entries(this.state.unlockedFeatures).join(', ')}</div> }
+        { DEBUG && <div>Widgets: {this.state.widgets}</div> }
+        { DEBUG && <div>Tested widgets: {this.state.testedWidgets}</div> }
+        { DEBUG && <div>Packages: {this.state.packages}</div> }
+        { DEBUG && <div>Orders fulfilled: {this.state.deliveredPackages}</div> }
+        { DEBUG && <br /> }
+        { DEBUG && <div>widgetPartPrice: {this.state.widgetPartPrice}</div> }
+        { DEBUG && <div>widgetPrice: {this.state.widgetPrice}</div> }
+        { DEBUG && <div>timeUntilOrderCancel: {this.state.timeUntilOrderCancel}</div> }
+        {/* { DEBUG && <div>unlockedFeatures: {Object.entries(this.state.unlockedFeatures).join(', ')}</div> } */}
+
 
         <ActionDescriptionText currentAction={this.state.action} />
         <ActionPanel
