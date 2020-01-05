@@ -163,6 +163,8 @@ export default class InGameView extends React.Component<Props, GameState> {
           packages={this.state.packages}
           completedOrders={this.state.completedOrders}
 
+          partPrice={this.state.widgetPartPrice}
+
           setPlayerAction={this.setPlayerAction}
           unlockedFeatures={this.state.unlockedFeatures}
         />
