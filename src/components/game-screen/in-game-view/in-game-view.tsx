@@ -5,6 +5,9 @@ import ActionPanel from '../../action-panel/action-panel';
 import MoodHandler, { Mood } from '../../mood-handler/mood-handler';
 import ActionDescriptionText from '../../action-description-text/action-description-text';
 
+const FPS = 50
+const DEBUG = true
+
 export type GameState = {
   action: PlayerAction
   money: number
@@ -107,9 +110,10 @@ export default class InGameView extends React.Component<Props, GameState> {
   render() {
     return (
       <div className='game-container'>
-        <div>Current action: {this.state.action}</div>
+        { DEBUG && <div>Current action: {this.state.action}</div> }
         <div>Money: {this.state.money}</div>
-        <div>unlockedFeatures: {Object.entries(this.state.unlockedFeatures).join(', ')}</div>
+        <div>Orders: {this.state.orders}</div>
+        { DEBUG && <div>unlockedFeatures: {Object.entries(this.state.unlockedFeatures).join(', ')}</div> }
 
         <ActionDescriptionText currentAction={this.state.action} />
         <ActionPanel
