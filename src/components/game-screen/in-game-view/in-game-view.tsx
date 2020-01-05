@@ -36,6 +36,7 @@ export type GameState = {
   widgetPrice: number
   widgetPartPrice: number
   timeUntilOrderCancel: number
+  defaultTimeUntilOrderCancel: number
 }
 
 // action names other than 'idle' should have a verb and noun, both in base form (ignore plural, tense, etc)
@@ -97,6 +98,7 @@ export const newGameState: GameState = {
   widgetPrice: 1400,
   widgetPartPrice: 850,
   timeUntilOrderCancel: 300000,
+  defaultTimeUntilOrderCancel: 300000,
 }
 
 interface Props {
@@ -113,11 +115,18 @@ export default class InGameView extends React.Component<Props, GameState> {
   }
 
   setPlayerAction = (newAction: PlayerAction): void => {
-    this.setState({
-      action: 'change-action',
-      nextAction: newAction,
-      timeSinceActionStarted: 0
-    })
+    if (newAction === this.state.action) {
+      // cancel current action
+      this.setState({
+        action: 'idle'
+      })
+    } else {
+      this.setState({
+        action: 'change-action',
+        nextAction: newAction,
+        timeSinceActionStarted: 0
+      })
+    }
   }
 
   updateGameState = (): void => {
@@ -168,7 +177,7 @@ const nextState = (state: GameState, _: Props): GameState => {
   // handle other actions
   ns.timeSinceActionStarted += 1000 / FPS
   const targetTime = getActionTargetTime(ns)
-  if (ns.action === 'build-widget' || ns.action === 'test-widget' || ns.action === 'package-widget' || ns.action === 'deliver-package') {
+  if (ns.action === 'build-widget' || ns.action === 'test-widget' || ns.action === 'package-widget' || ns.action === 'deliver-package' || ns.action === 'change-action') {
     if (ns.timeSinceActionStarted >= targetTime) {
       ns.timeSinceActionStarted -= targetTime
       switch (ns.action) {
@@ -187,12 +196,18 @@ const nextState = (state: GameState, _: Props): GameState => {
         case 'deliver-package':
           const numberDelivered = Math.min(ns.orders, ns.packages)
 
-          ns.money += ns.widgetPrice * numberDelivered
+          ns.orders -= numberDelivered
           ns.deliveredPackages += numberDelivered
           ns.timeUntilOrderCancel += newOrderTime(ns.deliveredPackages) * numberDelivered
           ns.packages = 0
 
           ns.widgetPrice -= numberDelivered
+          break
+
+        case 'change-action':
+          ns.action = ns.nextAction !== undefined ? ns.nextAction : 'idle'
+          ns.nextAction = undefined
+          ns.timeSinceActionStarted = 0
           break
 
         default:
@@ -204,9 +219,6 @@ const nextState = (state: GameState, _: Props): GameState => {
   // handle waiting when changing actions
   if (ns.action === 'change-action' && ns.nextAction !== undefined) {
     if (ns.timeSinceActionStarted >= targetTime) {
-      ns.action = ns.nextAction
-      ns.nextAction = undefined
-      ns.timeSinceActionStarted = 0
     }
   }
 
