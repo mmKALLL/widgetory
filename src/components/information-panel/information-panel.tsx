@@ -33,12 +33,12 @@ export default function InformationPanel(props: { debugEnabled: boolean, state: 
         { props.debugEnabled && <div className="information-panel-divider"></div> }
 
         <div>Money: {props.state.money}</div>
-        { props.debugEnabled && <div>Parts: {props.state.widgetParts}</div> }
+        {/* { props.debugEnabled && <div>Parts: {props.state.widgetParts}</div> }
         { props.debugEnabled && <div>Orders: {props.state.orders}</div> }
         { props.debugEnabled && <div>Widgets: {props.state.widgets}</div> }
         { props.debugEnabled && <div>Tested widgets: {props.state.testedWidgets}</div> }
         { props.debugEnabled && <div>Packages: {props.state.packages}</div> }
-        { props.debugEnabled && <div>Orders fulfilled: {props.state.completedOrders}</div> }
+        { props.debugEnabled && <div>Orders fulfilled: {props.state.completedOrders}</div> } */}
 
         { props.debugEnabled && <div className="information-panel-divider"></div> }
 
