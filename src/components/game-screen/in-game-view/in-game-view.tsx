@@ -48,7 +48,7 @@ export const newGameState: GameState = {
   action: 'idle',
   money: 40000, // in something similar to 2019 yen - i.e. USD 0.01
   mood: {
-    overall: 20,
+    overall: 28,
     r: 0,
     g: 0,
     b: 0
@@ -61,7 +61,7 @@ export const newGameState: GameState = {
   uncheckedOrders: 0,
   orders: 0,
 
-  widgetParts: 10,
+  widgetParts: 8,
   widgets: 0,
   testedWidgets: 0,
   packages: 0,
@@ -79,7 +79,7 @@ export const newGameState: GameState = {
 
   widgetPrice: 1400,
   widgetPartPrice: 850,
-  timeUntilOrderCancel: 120000,
+  timeUntilOrderCancel: 75000,
 }
 
 interface Props {
@@ -173,7 +173,6 @@ const nextState = (state: GameState, _: Props): GameState => {
           ns.orders += ns.uncheckedOrders
           ns.money += ns.uncheckedOrders * ns.widgetPrice
           ns.uncheckedOrders = 0
-          ns.action = 'idle'
           break
         case 'build-widget':
           ns.widgets += 1
@@ -244,11 +243,11 @@ const nextState = (state: GameState, _: Props): GameState => {
 
 // Return time between orders in milliseconds
 const newOrderTime = (deliveredPackages: number): number => {
-  return 30 * 1000 * 40 / (deliveredPackages + 40)
+  return 25 * 1000 * 40 / (deliveredPackages + 40)
 }
 
 const newTimeUntilOrderCancel = (deliveredPackages: number, outstandingOrders: number): number => {
-  return 120 * 1000 * 10000 / (deliveredPackages + 10000) / (Math.sqrt(outstandingOrders + 1)) // ~120s divided by orders until lategame
+  return 120 * 1000 * 10000 / (deliveredPackages + 10000) / (Math.pow(outstandingOrders + 1, 0.7)) // ~120s divided by orders until lategame
 }
 
 export const getActionTargetTime = (state: GameState): number => {
