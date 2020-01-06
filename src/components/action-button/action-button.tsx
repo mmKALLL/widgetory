@@ -6,7 +6,7 @@ export default function ActionButton(props: { text: string, subtext: string, onC
   return (
     <span className="action-button-container">
       <Button text={props.text} onClick={props.onClick} className="button primary-action-button" />
-      {props.subtext.split('\n').map(item => <span className="action-button-subtext">{item}</span>)}
+      {props.subtext.split('\n').map(item => <span key={item} className="action-button-subtext">{item}</span>)}
     </span>
   )
 }

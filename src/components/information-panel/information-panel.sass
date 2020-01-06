@@ -1,0 +1,15 @@
+@function v($var, $fallback: null)
+  @if($fallback)
+    @return var(--#{$var}, #{$fallback})
+  @else
+    @return var(--#{$var})
+
+.information-panel-container
+  margin: 0.5rem
+
+.information-panel-divider
+  border: 0.5px solid v(mood-text-color)
+  margin: 0.5rem 2rem 0.5rem 2rem
+
+.action-progress-bar
+  display: inline

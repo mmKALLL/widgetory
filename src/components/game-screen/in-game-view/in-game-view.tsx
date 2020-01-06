@@ -3,7 +3,7 @@ import FooterArea from '../../footer-area/footer-area';
 import { saveGame } from '../../../utils/save-file-utils';
 import ActionPanel from '../../action-panel/action-panel';
 import MoodHandler, { Mood } from '../../mood-handler/mood-handler';
-import ActionDescriptionText from '../../action-description-text/action-description-text';
+import InformationPanel from '../../information-panel/information-panel';
 
 const FPS = 50
 const DEBUG = true
@@ -74,7 +74,7 @@ export const newGameState: GameState = {
   checkOrderTime: 3000,
   widgetBuildTime: 7000,
   widgetTestTime: 3000,
-  widgetPackageTime: 1000, // can package without testing
+  widgetPackageTime: 1200, // can package without testing
   packageDeliveryTime: 12000,
 
   widgetPrice: 1400,
@@ -117,23 +117,11 @@ export default class InGameView extends React.Component<Props, GameState> {
   render() {
     return (
       <div className='game-container'>
-        { DEBUG && <div>Current action: {this.state.action}</div> }
-        { DEBUG && <div>Action complete: {Math.floor(this.state.timeSinceActionStarted / getActionTargetTime(this.state) * 100)}% ({Math.floor((getActionTargetTime(this.state) - this.state.timeSinceActionStarted) / 1000)} sec)</div> }
-        <div>Money: {this.state.money}</div>
-        { DEBUG && <div>Parts: {this.state.widgetParts}</div> }
-        { DEBUG && <div>Orders: {this.state.orders}</div> }
-        { DEBUG && <div>Widgets: {this.state.widgets}</div> }
-        { DEBUG && <div>Tested widgets: {this.state.testedWidgets}</div> }
-        { DEBUG && <div>Packages: {this.state.packages}</div> }
-        { DEBUG && <div>Orders fulfilled: {this.state.completedOrders}</div> }
-        { DEBUG && <br /> }
-        { DEBUG && <div>widgetPartPrice: {this.state.widgetPartPrice}</div> }
-        { DEBUG && <div>widgetPrice: {this.state.widgetPrice}</div> }
-        { DEBUG && <div>timeUntilOrderCancel: {Math.floor(this.state.timeUntilOrderCancel / 1000)} sec</div> }
-        {/* { DEBUG && <div>unlockedFeatures: {Object.entries(this.state.unlockedFeatures).join(', ')}</div> } */}
+        <InformationPanel
+          debugEnabled={DEBUG}
+          state={this.state}
+        />
 
-
-        <ActionDescriptionText currentAction={this.state.action} />
         <ActionPanel
           orders={this.state.orders}
           parts={this.state.widgetParts}
@@ -263,7 +251,7 @@ const newTimeUntilOrderCancel = (deliveredPackages: number): number => {
   return 120 * 1000 * 10000 / (deliveredPackages + 10000) // ~120s until lategame
 }
 
-const getActionTargetTime = (state: GameState): number => {
+export const getActionTargetTime = (state: GameState): number => {
   switch (state.action) {
     case 'check-orders': return state.checkOrderTime
     case 'build-widget': return state.widgetBuildTime
