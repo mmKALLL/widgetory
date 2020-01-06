@@ -218,7 +218,7 @@ const nextState = (state: GameState, _: Props): GameState => {
       ns.uncheckedOrders -= 1
       console.log(`cancelled unchecked order, lost no yen, ${ns.orders} checked and ${ns.uncheckedOrders} unchecked left`)
     }
-    ns.timeUntilOrderCancel = newTimeUntilOrderCancel(ns.completedOrders)
+    ns.timeUntilOrderCancel = newTimeUntilOrderCancel(ns.completedOrders, ns.orders + ns.uncheckedOrders)
   }
 
   // Randomly change the market situation; proportional ease over time towards magic constants, with random multipliers
@@ -247,8 +247,8 @@ const newOrderTime = (deliveredPackages: number): number => {
   return 30 * 1000 * 40 / (deliveredPackages + 40)
 }
 
-const newTimeUntilOrderCancel = (deliveredPackages: number): number => {
-  return 120 * 1000 * 10000 / (deliveredPackages + 10000) // ~120s until lategame
+const newTimeUntilOrderCancel = (deliveredPackages: number, outstandingOrders: number): number => {
+  return 120 * 1000 * 10000 / (deliveredPackages + 10000) / (Math.sqrt(outstandingOrders + 1)) // ~120s divided by orders until lategame
 }
 
 export const getActionTargetTime = (state: GameState): number => {

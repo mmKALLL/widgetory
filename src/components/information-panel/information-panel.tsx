@@ -25,7 +25,7 @@ export default function InformationPanel(props: { debugEnabled: boolean, state: 
               <pre className="action-progress-bar">{progressBar(actionCompletionPercentage, 100)}</pre>
               {` ${actionCompletionPercentage}%`}
               {getActionTargetTime(props.state) < 600 * 1000 && // show time in sec if less than 10 min left; filters idle state off
-                  ` (${Math.round((getActionTargetTime(props.state) - props.state.timeSinceActionStarted + 1000) / 1000)} sec)`
+                  ` (${Math.floor((getActionTargetTime(props.state) - props.state.timeSinceActionStarted + 1000) / 1000)} sec)`
               }
           </div>
         }
