@@ -6,7 +6,7 @@ import MoodHandler, { Mood } from '../../mood-handler/mood-handler';
 import InformationPanel from '../../information-panel/information-panel';
 
 const FPS = 50
-const DEBUG = true
+const DEBUG = false
 
 export type GameState = {
   action: PlayerAction

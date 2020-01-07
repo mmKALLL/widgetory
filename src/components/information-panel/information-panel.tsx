@@ -18,17 +18,15 @@ export default function InformationPanel(props: { debugEnabled: boolean, state: 
         {/* { props.debugEnabled && <div>Current action: {props.state.action}</div> } */}
 
         <ActionDescriptionText currentAction={props.state.action} />
-        { props.state.unlockedFeatures['build-button'] &&
-          <div>
-            Progress:
-              {/* Progress bar, percentage, then seconds left, e.g. '[###      ] 36% (4 sec)' */}
-              <pre className="action-progress-bar">{progressBar(actionCompletionPercentage, 100)}</pre>
-              {` ${actionCompletionPercentage}%`}
-              {getActionTargetTime(props.state) < 600 * 1000 && // show time in sec if less than 10 min left; filters idle state off
-                  ` (${Math.floor((getActionTargetTime(props.state) - props.state.timeSinceActionStarted + 1000) / 1000)} sec)`
-              }
-          </div>
-        }
+        <div className={props.state.unlockedFeatures['build-button'] ? "action-progress-container" : "hidden"}>
+          Progress:
+            {/* Progress bar, percentage, then seconds left, e.g. '[###      ] 36% (4 sec)' */}
+            <pre className="action-progress-bar">{progressBar(actionCompletionPercentage, 100)}</pre>
+            {` ${actionCompletionPercentage}%`}
+            {getActionTargetTime(props.state) < 600 * 1000 && // show time in sec if less than 10 min left; filters idle state off
+                ` (${Math.floor((getActionTargetTime(props.state) - props.state.timeSinceActionStarted + 1000) / 1000)} sec)`
+            }
+        </div>
 
         { props.debugEnabled && <div className="information-panel-divider"></div> }
 
