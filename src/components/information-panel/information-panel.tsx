@@ -18,9 +18,9 @@ export default function InformationPanel(props: { debugEnabled: boolean, state: 
         {/* { props.debugEnabled && <div>Current action: {props.state.action}</div> } */}
 
         <ActionDescriptionText currentAction={props.state.action} />
-        { props.debugEnabled &&
+        { props.state.unlockedFeatures['build-button'] &&
           <div>
-            Action complete:
+            Progress:
               {/* Progress bar, percentage, then seconds left, e.g. '[###      ] 36% (4 sec)' */}
               <pre className="action-progress-bar">{progressBar(actionCompletionPercentage, 100)}</pre>
               {` ${actionCompletionPercentage}%`}

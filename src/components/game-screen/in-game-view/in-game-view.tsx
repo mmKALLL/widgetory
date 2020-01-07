@@ -232,7 +232,7 @@ const nextState = (state: GameState, _: Props): GameState => {
   ns.unlockedFeatures = {
     ...ns.unlockedFeatures
   }
-  if (ns.orders > 0) { ns.unlockedFeatures["build-button"] = true }
+  if (ns.orders > 0 && !ns.unlockedFeatures["build-button"]) { ns.action = 'idle'; ns.unlockedFeatures["build-button"] = true }
   if (ns.widgets > 0) { ns.unlockedFeatures["test-button"] = true }
   if (ns.testedWidgets > 0) { ns.unlockedFeatures["package-button"] = true }
   if (ns.packages > 0) { ns.unlockedFeatures["deliver-button"] = true }
