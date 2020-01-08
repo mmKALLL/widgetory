@@ -37,12 +37,28 @@ export type GameState = {
   widgetPrice: number
   widgetPartPrice: number
   timeUntilOrderCancel: number
+
+  // below this unused
+  unassignedWorkers: number
+  workerHappiness: number // TODO: consider more deeply what goes into this
+  consultantLevel: number
+  salesLevel: number
+  hrSpecialists: number
+  workerManagers: number
+  companyDirectors: number // CEO, CTO, CXO, etc
+
+  energyUsed: number
+  environmentImpact: number // co2 tons released/captured in total
+  stockPrice: number
 }
 
 // action names other than 'idle' should have a verb and noun, in imperative and base singular/plural form
-export type PlayerAction = 'idle' | 'change-action' | 'check-orders' | 'build-widget' | 'test-widget' | 'package-widget' | 'deliver-packages' | 'purchase-parts'
+export type PlayerAction = 'idle' | 'change-action' | 'check-orders' | 'build-widget' | 'test-widget' | 'package-widget' | 'deliver-packages' |
+    'purchase-parts' | 'hire-worker'
 
-export type FeatureName = 'order-button' | 'build-button' | 'test-button' | 'package-button' | 'deliver-button' | 'purchase-parts-button'
+export type FeatureName = 'order-button' | 'build-button' | 'test-button' | 'package-button' | 'deliver-button' | 'purchase-parts-button' |
+    'hire-worker-button' | 'assign-worker-buttons' | 'hire-office-assistant-button' | 'hire-sales-specialist-button' |
+    'hire-consultant-button' | 'hire-hr-specialist-button' | 'hire-worker-manager-button' | 'hire-ceo-button'
 
 export const newGameState: GameState = {
   action: 'idle',
@@ -57,7 +73,7 @@ export const newGameState: GameState = {
     "order-button": true,
   },
 
-  timeToNextOrder: 13000,
+  timeToNextOrder: 12000,
   uncheckedOrders: 0,
   orders: 0,
 
@@ -68,18 +84,30 @@ export const newGameState: GameState = {
   completedOrders: 0,
 
   timeSinceActionStarted: 0,
-  actionSwitchTime: 2000,
+  actionSwitchTime: 2300,
   nextAction: undefined,
 
   checkOrderTime: 3000,
   widgetBuildTime: 7000,
   widgetTestTime: 3000,
-  widgetPackageTime: 1200, // can package without testing
+  widgetPackageTime: 1200, // TODO: can package without testing?
   packageDeliveryTime: 12000,
 
   widgetPrice: 1400,
   widgetPartPrice: 850,
-  timeUntilOrderCancel: 75000,
+  timeUntilOrderCancel: 150 * 1000,
+
+  unassignedWorkers: 0,
+  workerHappiness: 70, // TODO: consider more deeply what goes into this
+  consultantLevel: 0,
+  salesLevel: 0,
+  hrSpecialists: 0,
+  workerManagers: 0,
+  companyDirectors: 0, // CEO, CTO, CXO, etc
+
+  energyUsed: 0, // kwh
+  environmentImpact: 0, // co2 tons released/captured in total (4300 kwh/1000kg)
+  stockPrice: 0,
 }
 
 interface Props {
@@ -176,12 +204,14 @@ const nextState = (state: GameState, _: Props): GameState => {
           break
         case 'build-widget':
           if (ns.widgetParts > 0) {
+            ns.energyUsed += 2.0
             ns.widgets += 1
             ns.widgetParts -= 1
           }
           break
         case 'test-widget':
           if (ns.widgets > 0) {
+            ns.energyUsed += 0.6
             ns.testedWidgets += 1
             ns.widgets -= 1
           }
@@ -241,8 +271,8 @@ const nextState = (state: GameState, _: Props): GameState => {
     ...ns.unlockedFeatures
   }
   if (ns.orders > 0 && !ns.unlockedFeatures["build-button"]) { ns.action = 'idle'; ns.unlockedFeatures["build-button"] = true }
-  if (ns.widgets > 0) { ns.unlockedFeatures["test-button"] = true }
-  if (ns.testedWidgets > 0) { ns.unlockedFeatures["package-button"] = true }
+  if (ns.widgets >= 3) { ns.unlockedFeatures["test-button"] = true }
+  if (ns.testedWidgets >= 3) { ns.unlockedFeatures["package-button"] = true }
   if (ns.packages > 0) { ns.unlockedFeatures["deliver-button"] = true }
   if (ns.widgetParts === 0) { ns.unlockedFeatures["purchase-parts-button"] = true }
 
