@@ -15,7 +15,6 @@ export default function InformationPanel(props: { debugEnabled: boolean, state: 
 
   return (
     <div className="information-panel-container">
-        {/* { props.debugEnabled && <div>Current action: {props.state.action}</div> } */}
 
         <ActionDescriptionText currentAction={props.state.action} />
         <div className={props.state.unlockedFeatures['build-button'] ? "action-progress-container" : "hidden"}>
@@ -28,22 +27,19 @@ export default function InformationPanel(props: { debugEnabled: boolean, state: 
             }
         </div>
 
-        { props.debugEnabled && <div className="information-panel-divider"></div> }
+        {/* <div className={props.state.unlockedFeatures["package-button"] ? "information-panel-divider" : "hidden"}></div> */}
 
-        <div>Money: {props.state.money}</div>
-        {/* { props.debugEnabled && <div>Parts: {props.state.widgetParts}</div> }
-        { props.debugEnabled && <div>Orders: {props.state.orders}</div> }
-        { props.debugEnabled && <div>Widgets: {props.state.widgets}</div> }
-        { props.debugEnabled && <div>Tested widgets: {props.state.testedWidgets}</div> }
-        { props.debugEnabled && <div>Packages: {props.state.packages}</div> }
-        { props.debugEnabled && <div>Orders fulfilled: {props.state.completedOrders}</div> } */}
+        <div className={props.state.unlockedFeatures["test-button"] || props.state.unlockedFeatures["purchase-parts-button"] ? "money-text" : "hidden"}>
+            Money: {props.state.money}</div>
+        <div className={props.state.consultantLevel >= 2 ? "order-cancel-text" : "hidden"}>
+            Time until order cancel: {Math.floor(props.state.timeUntilOrderCancel / 1000)} sec</div>
 
-        { props.debugEnabled && <div className="information-panel-divider"></div> }
+        <div className={props.state.unlockedFeatures["deliver-button"] ? "information-panel-divider" : "hidden"}></div>
 
-        { props.debugEnabled && <div>widgetPartPrice: {props.state.widgetPartPrice}</div> }
-        { props.debugEnabled && <div>widgetPrice: {props.state.widgetPrice}</div> }
-        { props.debugEnabled && <div>timeUntilOrderCancel: {Math.floor(props.state.timeUntilOrderCancel / 1000)} sec</div> }
-        {/* { props.debugEnabled && <div>unlockedFeatures: {Object.entries(props.state.unlockedFeatures).join(', ')}</div> } */}
+        <div className={props.state.unlockedFeatures["purchase-parts-button"] ? "widget-part-price-text" : "hidden"}>
+            Widget part purchase price: {props.state.widgetPartPrice}</div>
+        <div className={props.state.unlockedFeatures["deliver-button"] ? "widget-price-text" : "hidden"}>
+            Widget sell price: {props.state.widgetPrice}</div>
     </div>
   )
 }
