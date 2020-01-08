@@ -6,7 +6,7 @@ import MoodHandler, { Mood } from '../../mood-handler/mood-handler';
 import InformationPanel from '../../information-panel/information-panel';
 
 const FPS = 50
-const DEBUG = false
+const DEBUG = true
 
 export type GameState = {
   action: PlayerAction
@@ -169,22 +169,28 @@ const nextState = (state: GameState, _: Props): GameState => {
           ns.timeSinceActionStarted = 0
           break
         case 'check-orders':
-          console.log(`got ${ns.uncheckedOrders} new orders, received ${ns.uncheckedOrders * ns.widgetPrice} yen`)
+          if (DEBUG) console.log(`got ${ns.uncheckedOrders} new orders, received ${ns.uncheckedOrders * ns.widgetPrice} yen`)
           ns.orders += ns.uncheckedOrders
           ns.money += ns.uncheckedOrders * ns.widgetPrice
           ns.uncheckedOrders = 0
           break
         case 'build-widget':
-          ns.widgets += 1
-          ns.widgetParts -= 1
+          if (ns.widgetParts > 0) {
+            ns.widgets += 1
+            ns.widgetParts -= 1
+          }
           break
         case 'test-widget':
-          ns.testedWidgets += 1
-          ns.widgets -= 1
+          if (ns.widgets > 0) {
+            ns.testedWidgets += 1
+            ns.widgets -= 1
+          }
           break
         case 'package-widget':
-          ns.packages += 1
-          ns.testedWidgets -= 1
+          if (ns.testedWidgets > 0) {
+            ns.packages += 1
+            ns.testedWidgets -= 1
+          }
           break
         case 'deliver-packages':
           const numberDelivered = Math.min(ns.orders, ns.packages)
@@ -212,10 +218,10 @@ const nextState = (state: GameState, _: Props): GameState => {
     if (ns.orders > 0) {
       ns.orders -= 1
       ns.money -= ns.widgetPrice
-      console.log(`cancelled order, lost ${ns.widgetPrice} yen, ${ns.orders} checked and ${ns.uncheckedOrders} unchecked left, next in ${newTimeUntilOrderCancel(ns.completedOrders, ns.orders + ns.uncheckedOrders) / 1000} seconds`)
+      if (DEBUG) console.log(`cancelled order, lost ${ns.widgetPrice} yen, ${ns.orders} checked and ${ns.uncheckedOrders} unchecked left, next in ${newTimeUntilOrderCancel(ns.completedOrders, ns.orders + ns.uncheckedOrders) / 1000} seconds`)
     } else {
       ns.uncheckedOrders -= 1
-      console.log(`cancelled unchecked order, lost no yen, ${ns.orders} checked and ${ns.uncheckedOrders} unchecked left, next in ${newTimeUntilOrderCancel(ns.completedOrders, ns.orders + ns.uncheckedOrders) / 1000} seconds`)
+      if (DEBUG) console.log(`cancelled unchecked order, lost no yen, ${ns.orders} checked and ${ns.uncheckedOrders} unchecked left, next in ${newTimeUntilOrderCancel(ns.completedOrders, ns.orders + ns.uncheckedOrders) / 1000} seconds`)
     }
     ns.timeUntilOrderCancel = newTimeUntilOrderCancel(ns.completedOrders, ns.orders + ns.uncheckedOrders)
   }
@@ -223,9 +229,11 @@ const nextState = (state: GameState, _: Props): GameState => {
   // Randomly change the market situation; proportional ease over time towards magic constants, with random multipliers
   if (Math.random() < 1 / (ns.completedOrders / 1000 + 1000)) {
     ns.widgetPrice += Math.floor((Math.random() - 0.3) * ((8457 - ns.widgetPrice) / 100))
+    if (DEBUG) console.log(`widget price changed to ${ns.widgetPrice}`)
   }
   if (Math.random() < 1 / (ns.widgetParts + 1000)) {
     ns.widgetPartPrice -= Math.floor((Math.random() - 0.3) * ((128 + ns.widgetPartPrice) / 100))
+    if (DEBUG) console.log(`widget part price changed to ${ns.widgetPartPrice}`)
   }
 
   // check unlocks

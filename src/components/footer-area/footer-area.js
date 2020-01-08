@@ -28,7 +28,7 @@ export default class FooterArea extends React.Component {
 function LikeButton(props) {
   if (props.liked) {
     /* eslint-disable jsx-a11y/accessible-emoji */
-    return <div>Thanks! ⭐️</div>
+    return <div className="footer-thanks">Thanks! ⭐️</div>
   } else {
     return <Button onClick={props.onClick} text="Like" />
   }
