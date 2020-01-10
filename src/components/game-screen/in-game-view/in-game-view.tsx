@@ -15,6 +15,7 @@ export type GameState = {
   unlockedFeatures: { [key in FeatureName]?: boolean }
 
   timeToNextOrder: number // time to add an unchecked order in milliseconds
+  timeUntilOrderCancel: number
   uncheckedOrders: number
   orders: number
 
@@ -38,11 +39,12 @@ export type GameState = {
 
   widgetPrice: number
   widgetPartPrice: number
-  timeUntilOrderCancel: number
 
-  // below this unused
   unassignedWorkers: number
   workerHappiness: number // TODO: consider more deeply what goes into this
+  workerHourlySalary: number
+  workerSpeed: number
+
   consultantLevel: number
   salesLevel: number
   hrSpecialists: number
@@ -75,7 +77,8 @@ export const newGameState: GameState = {
     "order-button": true,
   },
 
-  timeToNextOrder: 12000,
+  timeToNextOrder: 12 * 1000,
+  timeUntilOrderCancel: 150 * 1000,
   uncheckedOrders: 0,
   orders: 0,
 
@@ -89,6 +92,7 @@ export const newGameState: GameState = {
   actionSwitchTime: 2300,
   nextAction: undefined,
 
+  // how long it takes to finish various actions
   checkOrderTime: 3000,
   widgetBuildTime: 7000,
   widgetTestTime: 3000,
@@ -99,10 +103,12 @@ export const newGameState: GameState = {
 
   widgetPrice: 1400,
   widgetPartPrice: 850,
-  timeUntilOrderCancel: 150 * 1000,
 
   unassignedWorkers: 0,
   workerHappiness: 70, // TODO: consider more deeply what goes into this
+  workerHourlySalary: 1300,
+  workerSpeed: 0.2, // relative to player, increases over time and when hiring consultants (increased skills), decreases when hiring workers (communication overhead)
+
   consultantLevel: 0,
   salesLevel: 0,
   hrSpecialists: 0,
@@ -124,7 +130,7 @@ export default class InGameView extends React.Component<Props, GameState> {
     this.state = props.initialState
 
     window.setInterval(this.updateGameState, 1000 / FPS)
-    window.setInterval(() => saveGame(this.state), 10000)
+    window.setInterval(() => saveGame(this.state), 10 * 1000)
   }
 
   setPlayerAction = (newAction: PlayerAction): void => {
@@ -240,10 +246,15 @@ const nextState = (state: GameState, _: Props): GameState => {
           ns.action = 'idle'
           break
         case 'purchase-parts':
-
+          if (ns.money >= ns.widgetPartPrice) {
+            ns.widgetParts += 1
+            ns.money -= ns.widgetPartPrice
+          }
           break
         case 'hire-worker':
-
+          if (ns.money >= ns.workerHourlySalary) {
+            ns.unassignedWorkers += 1
+          }
           break
         default:
 
@@ -285,6 +296,11 @@ const nextState = (state: GameState, _: Props): GameState => {
   if (ns.packages > 0) { ns.unlockedFeatures["deliver-button"] = true }
   if (ns.widgetParts === 0) { ns.unlockedFeatures["purchase-parts-button"] = true }
 
+  if (ns.completedOrders === 7) { ns.unlockedFeatures["hire-worker-button"] = true }
+  if (ns.unassignedWorkers > 0) { ns.unlockedFeatures["assign-worker-buttons"] = true }
+  // if (ns.completedOrders === 16) { ns.unlockedFeatures["hire-sales-specialist-button"] = true }
+  // if (ns.completedOrders === 40) { ns.unlockedFeatures["hire-consultant-button"] = true }
+
   return ns
 }
 
@@ -300,11 +316,13 @@ const newTimeUntilOrderCancel = (deliveredPackages: number, outstandingOrders: n
 export const getActionTargetTime = (state: GameState): number => {
   switch (state.action) {
     case 'change-action': return state.actionSwitchTime
+
     case 'check-orders': return state.checkOrderTime
     case 'build-widget': return state.widgetBuildTime
     case 'test-widget': return state.widgetTestTime
     case 'package-widget': return state.widgetPackageTime
     case 'deliver-packages': return state.packageDeliveryTime
+
     case 'purchase-parts': return state.widgetPartPurchaseTime
     case 'hire-worker': return state.hireWorkerTime
     default:
