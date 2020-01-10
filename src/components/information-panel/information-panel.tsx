@@ -17,7 +17,7 @@ export default function InformationPanel(props: { debugEnabled: boolean, state: 
     <div className="information-panel-container">
 
         <ActionDescriptionText currentAction={props.state.action} />
-        <div className={props.state.unlockedFeatures['build-button'] ? "action-progress-container" : "hidden"}>
+        <div className={props.state.unlockedFeatures['test-button'] ? "action-progress-container" : "hidden"}>
           Progress:
             {/* Progress bar, percentage, then seconds left, e.g. '[###      ] 36% (4 sec)' */}
             <pre className="action-progress-bar">{progressBar(actionCompletionPercentage, 100)}</pre>
@@ -29,13 +29,13 @@ export default function InformationPanel(props: { debugEnabled: boolean, state: 
 
         {/* <div className={props.state.unlockedFeatures["package-button"] ? "information-panel-divider" : "hidden"}></div> */}
 
-        <div className={props.state.unlockedFeatures["test-button"] || props.state.unlockedFeatures["purchase-parts-button"] ? "money-text" : "hidden"}>
+
+        <div className={props.state.unlockedFeatures["build-button"] || props.state.unlockedFeatures["purchase-parts-button"] ? "information-panel-divider" : "hidden"}></div>
+
+        <div className={props.state.unlockedFeatures["build-button"] || props.state.unlockedFeatures["purchase-parts-button"] ? "money-text" : "hidden"}>
             Money: {props.state.money}</div>
         <div className={props.state.consultantLevel >= 2 ? "order-cancel-text" : "hidden"}>
             Time until order cancel: {Math.floor(props.state.timeUntilOrderCancel / 1000)} sec</div>
-
-        <div className={props.state.unlockedFeatures["deliver-button"] ? "information-panel-divider" : "hidden"}></div>
-
         <div className={props.state.unlockedFeatures["purchase-parts-button"] ? "widget-part-price-text" : "hidden"}>
             Widget part purchase price: {props.state.widgetPartPrice}</div>
         <div className={props.state.unlockedFeatures["deliver-button"] ? "widget-price-text" : "hidden"}>
