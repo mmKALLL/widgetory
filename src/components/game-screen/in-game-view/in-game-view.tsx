@@ -33,6 +33,8 @@ export type GameState = {
   widgetTestTime: number
   widgetPackageTime: number
   packageDeliveryTime: number
+  widgetPartPurchaseTime: number
+  hireWorkerTime: number
 
   widgetPrice: number
   widgetPartPrice: number
@@ -92,6 +94,8 @@ export const newGameState: GameState = {
   widgetTestTime: 3000,
   widgetPackageTime: 1200, // TODO: can package without testing?
   packageDeliveryTime: 12000,
+  widgetPartPurchaseTime: 800,
+  hireWorkerTime: 32000,
 
   widgetPrice: 1400,
   widgetPartPrice: 850,
@@ -187,7 +191,7 @@ const nextState = (state: GameState, _: Props): GameState => {
   // handle other actions
   ns.timeSinceActionStarted += 1000 / FPS
   const targetTime = getActionTargetTime(ns)
-  if (ns.action === 'check-orders' || ns.action === 'build-widget' || ns.action === 'test-widget' || ns.action === 'package-widget' || ns.action === 'deliver-packages' || ns.action === 'change-action') {
+  if (ns.action !== 'idle') {
     if (ns.timeSinceActionStarted >= targetTime) {
       ns.timeSinceActionStarted -= targetTime
       switch (ns.action) {
@@ -235,7 +239,12 @@ const nextState = (state: GameState, _: Props): GameState => {
 
           ns.action = 'idle'
           break
+        case 'purchase-parts':
 
+          break
+        case 'hire-worker':
+
+          break
         default:
 
       }
@@ -290,12 +299,14 @@ const newTimeUntilOrderCancel = (deliveredPackages: number, outstandingOrders: n
 
 export const getActionTargetTime = (state: GameState): number => {
   switch (state.action) {
+    case 'change-action': return state.actionSwitchTime
     case 'check-orders': return state.checkOrderTime
     case 'build-widget': return state.widgetBuildTime
     case 'test-widget': return state.widgetTestTime
     case 'package-widget': return state.widgetPackageTime
     case 'deliver-packages': return state.packageDeliveryTime
-    case 'change-action': return state.actionSwitchTime
+    case 'purchase-parts': return state.widgetPartPurchaseTime
+    case 'hire-worker': return state.hireWorkerTime
     default:
       return 10000000000
   }
