@@ -92,4 +92,7 @@ typings/
 Icon
 
 # Thumbnails
-._*
+i._*
+
+# VSCode settings
+.vscode
