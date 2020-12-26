@@ -1,15 +1,5 @@
 import React from 'react'
 
-export type Mood = Color & {
-  overall: number // 0-155 for Overall, 0-100 for RGB values
-}
-
-export type Color = {
-  r: number // 0-255
-  g: number // 0-255
-  b: number // 0-255
-}
-
 interface Props {
   mood: Mood
 }
