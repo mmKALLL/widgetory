@@ -5,121 +5,6 @@ import ActionPanel from '../../action-panel/action-panel';
 import MoodHandler, { Mood } from '../../mood-handler/mood-handler';
 import InformationPanel from '../../information-panel/information-panel';
 
-const FPS = 50
-const DEBUG = true
-
-export type GameState = {
-  action: PlayerAction
-  money: number
-  mood: Mood
-  unlockedFeatures: { [key in FeatureName]?: boolean }
-
-  timeToNextOrder: number // time to add an unchecked order in milliseconds
-  timeUntilOrderCancel: number
-  uncheckedOrders: number
-  orders: number
-
-  widgetParts: number
-  widgets: number
-  testedWidgets: number
-  packages: number
-  completedOrders: number
-
-  timeSinceActionStarted: number
-  actionSwitchTime: number // delay between actions to cater for context switch, 'preparing to check orders'
-  nextAction: PlayerAction | undefined
-
-  checkOrderTime: number
-  widgetBuildTime: number
-  widgetTestTime: number
-  widgetPackageTime: number
-  packageDeliveryTime: number
-  widgetPartPurchaseTime: number
-  hireWorkerTime: number
-
-  widgetPrice: number
-  widgetPartPrice: number
-
-  unassignedWorkers: number
-  workerHappiness: number // TODO: consider more deeply what goes into this
-  workerHourlySalary: number
-  workerSpeed: number
-
-  consultantLevel: number
-  salesLevel: number
-  hrSpecialists: number
-  workerManagers: number
-  companyDirectors: number // CEO, CTO, CXO, etc
-
-  energyUsed: number
-  environmentImpact: number // co2 tons released/captured in total
-  stockPrice: number
-}
-
-// action names other than 'idle' should have a verb and noun, in imperative and base singular/plural form
-export type PlayerAction = 'idle' | 'change-action' | 'check-orders' | 'build-widget' | 'test-widget' | 'package-widget' | 'deliver-packages' |
-    'purchase-parts' | 'hire-worker'
-
-export type FeatureName = 'order-button' | 'build-button' | 'test-button' | 'package-button' | 'deliver-button' | 'purchase-parts-button' |
-    'hire-worker-button' | 'assign-worker-buttons' | 'hire-office-assistant-button' | 'hire-sales-specialist-button' |
-    'hire-consultant-button' | 'hire-hr-specialist-button' | 'hire-worker-manager-button' | 'hire-ceo-button'
-
-export const newGameState: GameState = {
-  action: 'idle',
-  money: 40000, // in something similar to 2019 yen - i.e. USD 0.01
-  mood: {
-    overall: 28,
-    r: 0,
-    g: 0,
-    b: 0
-  },
-  unlockedFeatures: {
-    "order-button": true,
-  },
-
-  timeToNextOrder: 12 * 1000,
-  timeUntilOrderCancel: 150 * 1000,
-  uncheckedOrders: 0,
-  orders: 0,
-
-  widgetParts: 8,
-  widgets: 0,
-  testedWidgets: 0,
-  packages: 0,
-  completedOrders: 0,
-
-  timeSinceActionStarted: 0,
-  actionSwitchTime: 2300,
-  nextAction: undefined,
-
-  // how long it takes to finish various actions
-  checkOrderTime: 3000,
-  widgetBuildTime: 7000,
-  widgetTestTime: 3000,
-  widgetPackageTime: 1200, // TODO: can package without testing?
-  packageDeliveryTime: 12000,
-  widgetPartPurchaseTime: 800,
-  hireWorkerTime: 32000,
-
-  widgetPrice: 1400,
-  widgetPartPrice: 850,
-
-  unassignedWorkers: 0,
-  workerHappiness: 70, // TODO: consider more deeply what goes into this
-  workerHourlySalary: 1300,
-  workerSpeed: 0.2, // relative to player, increases over time and when hiring consultants (increased skills), decreases when hiring workers (communication overhead)
-
-  consultantLevel: 0,
-  salesLevel: 0,
-  hrSpecialists: 0,
-  workerManagers: 0,
-  companyDirectors: 0, // CEO, CTO, CXO, etc
-
-  energyUsed: 0, // kwh
-  environmentImpact: 0, // co2 tons released/captured in total (4300 kwh/1000kg)
-  stockPrice: 0,
-}
-
 interface Props {
   initialState: GameState
 }
@@ -131,6 +16,7 @@ export default class InGameView extends React.Component<Props, GameState> {
 
     window.setInterval(this.updateGameState, 1000 / FPS)
     window.setInterval(() => saveGame(this.state), 10 * 1000)
+    window.setInterval(this.payWorkerSalaries, 60 * 1000) // pay salaries every minute
   }
 
   setPlayerAction = (newAction: PlayerAction): void => {
@@ -150,6 +36,10 @@ export default class InGameView extends React.Component<Props, GameState> {
 
   updateGameState = (): void => {
     this.setState(nextState)
+  }
+
+  payWorkerSalaries = (): void => {
+    this.setState(paySalaries)
   }
 
   render() {
@@ -303,6 +193,18 @@ const nextState = (state: GameState, _: Props): GameState => {
 
   return ns
 }
+
+// called every minute to pay salaries to workers
+const paySalaries = (state: GameState, _: Props): GameState => {
+  const ns: GameState = { ...state } // newState; shallow copy
+  ns.money -= (ns.unassignedWorkers + getAssignedWorkers(ns)) * ns.workerHourlySalary / 60
+  return ns
+}
+
+const getAssignedWorkers = (state: GameState): number => {
+  return Object.keys(state.assignedWorkers).reduce((key, accumulator): number => accumulator + state.assignedWorkers[key])
+}
+
 
 // Return time between orders in milliseconds
 const newOrderTime = (deliveredPackages: number): number => {
