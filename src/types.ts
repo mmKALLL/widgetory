@@ -1,6 +1,7 @@
+// Various game state and handling related typings for the project
 
-const FPS = 50
-const DEBUG = true
+export const FPS = 50
+export const DEBUG = true
 
 export type Mood = Color & {
   overall: number // 0-155 for Overall, 0-100 for RGB values

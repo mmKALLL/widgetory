@@ -1,4 +1,4 @@
-import { GameState, newGameState } from "../components/game-screen/in-game-view/in-game-view";
+import { GameState, newGameState } from "../types"
 
 const itemName = 'saveFile01'
 

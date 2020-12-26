@@ -2,8 +2,10 @@ import React from 'react'
 import FooterArea from '../../footer-area/footer-area';
 import { saveGame } from '../../../utils/save-file-utils';
 import ActionPanel from '../../action-panel/action-panel';
-import MoodHandler, { Mood } from '../../mood-handler/mood-handler';
+import MoodHandler from '../../mood-handler/mood-handler';
 import InformationPanel from '../../information-panel/information-panel';
+import { DEBUG, FPS, GameState, PlayerAction } from '../../../types';
+import { sum, typedObjectKeys } from '../../../utilities';
 
 interface Props {
   initialState: GameState
@@ -197,12 +199,12 @@ const nextState = (state: GameState, _: Props): GameState => {
 // called every minute to pay salaries to workers
 const paySalaries = (state: GameState, _: Props): GameState => {
   const ns: GameState = { ...state } // newState; shallow copy
-  ns.money -= (ns.unassignedWorkers + getAssignedWorkers(ns)) * ns.workerHourlySalary / 60
+  ns.money -= (ns.unassignedWorkers + getAssignedWorkerAmount(ns)) * ns.workerHourlySalary / 60
   return ns
 }
 
-const getAssignedWorkers = (state: GameState): number => {
-  return Object.keys(state.assignedWorkers).reduce((key, accumulator): number => accumulator + state.assignedWorkers[key])
+const getAssignedWorkerAmount = (state: GameState): number => {
+  return sum(Object.values(state.assignedWorkers).map(v => v ?? 0))
 }
 
 

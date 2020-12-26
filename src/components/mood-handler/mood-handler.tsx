@@ -1,4 +1,5 @@
 import React from 'react'
+import { Color, Mood } from '../../types'
 
 interface Props {
   mood: Mood

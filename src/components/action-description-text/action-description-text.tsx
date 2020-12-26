@@ -1,24 +1,27 @@
 import React from 'react'
-import { PlayerAction } from '../game-screen/in-game-view/in-game-view';
+import { PlayerAction } from '../../types'
+import { assertNever } from '../../utilities'
 
 interface Props {
   currentAction: PlayerAction
 }
 
-export default function ActionDescriptionText(props: Props) {
+export default function ActionDescriptionText({ currentAction }: Props) {
   return (
     <div>
       You are currently
       {
-        props.currentAction === 'idle' ? ' idle' :
-        props.currentAction === 'change-action' ? ' context switching' :
-        props.currentAction === 'check-orders' ? ' checking orders' :
-        props.currentAction === 'build-widget' ? ' building a widget' :
-        props.currentAction === 'test-widget' ? ' testing a widget' :
-        props.currentAction === 'package-widget' ? ' packaging a widget' :
-        props.currentAction === 'deliver-packages' ? ' delivering packages' :
-        props.currentAction === 'purchase-parts' ? ' purchasing parts' :
-        ' in an unknown state'
+        // prettier-ignore
+        currentAction === 'idle' ? ' idle' :
+        currentAction === 'change-action' ? ' context switching' :
+        currentAction === 'check-orders' ? ' checking orders' :
+        currentAction === 'build-widget' ? ' building a widget' :
+        currentAction === 'test-widget' ? ' testing a widget' :
+        currentAction === 'package-widget' ? ' packaging a widget' :
+        currentAction === 'deliver-packages' ? ' delivering packages' :
+        currentAction === 'purchase-parts' ? ' purchasing parts' :
+        currentAction === 'hire-worker' ? ' hiring workers' :
+        assertNever(currentAction)
       }
     </div>
   )
