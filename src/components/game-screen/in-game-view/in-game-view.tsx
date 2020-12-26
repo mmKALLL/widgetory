@@ -5,7 +5,7 @@ import ActionPanel from '../../action-panel/action-panel';
 import MoodHandler from '../../mood-handler/mood-handler';
 import InformationPanel from '../../information-panel/information-panel';
 import { DEBUG, FPS, GameState, PlayerAction } from '../../../types';
-import { sum, typedObjectKeys } from '../../../utilities';
+import { sum } from '../../../utilities';
 
 interface Props {
   initialState: GameState
