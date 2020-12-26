@@ -13,10 +13,6 @@ interface TextSettings {
   bgColor: string
 }
 
-interface State {
-  textIndex: number
-}
-
 export default function Cutscene(props: Props) {
   const [textIndex, setTextIndex] = useState(0)
   const lastIndex = props.text.length
