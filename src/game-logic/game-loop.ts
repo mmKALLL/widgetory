@@ -1,5 +1,5 @@
-import { assertNever, sum } from "../utils/utilities"
-import { DEBUG, FPS, GameState } from "./types"
+import { assertNever, sum } from '../utils/utilities'
+import { DEBUG, FPS, GameState } from './types'
 
 // create and return the next GameState based on the current one
 export const nextState = (state: GameState): GameState => {
@@ -86,10 +86,11 @@ export const nextState = (state: GameState): GameState => {
           if (ns.money >= ns.workerHourlySalary * 8) {
             ns.unassignedWorkers += 1
           } else {
-            ns.action ='idle'
+            ns.action = 'idle'
           }
           break
-        default: assertNever(ns.action)
+        default:
+          assertNever(ns.action)
       }
     }
   }
@@ -100,10 +101,8 @@ export const nextState = (state: GameState): GameState => {
     if (ns.orders > 0) {
       ns.orders -= 1
       // ns.money -= ns.widgetPrice // TODO: Add this back once player can research "get money at time of order"
-      if (DEBUG) console.log(`cancelled order, lost ${ns.widgetPrice} yen, ${ns.orders} checked and ${ns.uncheckedOrders} unchecked left, next in ${newTimeUntilOrderCancel(ns.completedOrders, ns.orders + ns.uncheckedOrders) / 1000} seconds`)
     } else {
       ns.uncheckedOrders -= 1
-      if (DEBUG) console.log(`cancelled unchecked order, lost no yen, ${ns.orders} checked and ${ns.uncheckedOrders} unchecked left, next in ${newTimeUntilOrderCancel(ns.completedOrders, ns.orders + ns.uncheckedOrders) / 1000} seconds`)
     }
     ns.timeUntilOrderCancel = newTimeUntilOrderCancel(ns.completedOrders, ns.orders + ns.uncheckedOrders)
   }
@@ -120,14 +119,29 @@ export const nextState = (state: GameState): GameState => {
 
   // check unlocks
   ns.unlockedFeatures = { ...ns.unlockedFeatures } // shallow copy
-  if (ns.orders > 0 && !ns.unlockedFeatures["build-button"]) { ns.action = 'idle'; ns.unlockedFeatures["build-button"] = true }
-  if (ns.widgets >= 3) { ns.unlockedFeatures["test-button"] = true }
-  if (ns.testedWidgets >= 3) { ns.unlockedFeatures["package-button"] = true }
-  if (ns.packages > 0) { ns.unlockedFeatures["deliver-button"] = true }
-  if (ns.widgetParts === 0) { ns.unlockedFeatures["purchase-parts-button"] = true }
+  if (ns.orders > 0 && !ns.unlockedFeatures['build-button']) {
+    ns.action = 'idle'
+    ns.unlockedFeatures['build-button'] = true
+  }
+  if (ns.widgets >= 3) {
+    ns.unlockedFeatures['test-button'] = true
+  }
+  if (ns.testedWidgets >= 3) {
+    ns.unlockedFeatures['package-button'] = true
+  }
+  if (ns.packages > 0) {
+    ns.unlockedFeatures['deliver-button'] = true
+  }
+  if (ns.widgetParts === 0) {
+    ns.unlockedFeatures['purchase-parts-button'] = true
+  }
 
-  if (ns.completedOrders === 7) { ns.unlockedFeatures["hire-worker-button"] = true }
-  if (ns.unassignedWorkers > 0) { ns.unlockedFeatures["assign-worker-buttons"] = true }
+  if (ns.completedOrders === 7) {
+    ns.unlockedFeatures['hire-worker-button'] = true
+  }
+  if (ns.unassignedWorkers > 0) {
+    ns.unlockedFeatures['assign-worker-buttons'] = true
+  }
   // if (ns.completedOrders === 16) { ns.unlockedFeatures["hire-sales-specialist-button"] = true }
   // if (ns.completedOrders === 40) { ns.unlockedFeatures["hire-consultant-button"] = true }
 
@@ -137,25 +151,25 @@ export const nextState = (state: GameState): GameState => {
 // called every minute to pay salaries to workers
 export const paySalaries = (state: GameState): GameState => {
   const ns: GameState = { ...state } // newState; shallow copy
-  ns.money -= (ns.unassignedWorkers + getAssignedWorkerAmount(ns)) * ns.workerHourlySalary / 60
+  ns.money -= ((ns.unassignedWorkers + getAssignedWorkerAmount(ns)) * ns.workerHourlySalary) / 60
   return ns
 }
 
 const getAssignedWorkerAmount = (state: GameState): number => {
-  return sum(Object.values(state.assignedWorkers).map(v => v ?? 0))
+  return sum(Object.values(state.assignedWorkers).map((v) => v ?? 0))
 }
-
 
 // Return time between orders in milliseconds
 const newOrderTime = (deliveredPackages: number): number => {
-  return 25 * 1000 * 40 / (deliveredPackages + 40)
+  return (25 * 1000 * 40) / (deliveredPackages + 40)
 }
 
 const newTimeUntilOrderCancel = (deliveredPackages: number, outstandingOrders: number): number => {
-  return 120 * 1000 * 10000 / (deliveredPackages + 10000) / (Math.pow(outstandingOrders + 1, 0.7)) // ~120s divided by orders until lategame
+  return (120 * 1000 * 10000) / (deliveredPackages + 10000) / Math.pow(outstandingOrders + 1, 0.7) // ~120s divided by orders until lategame
 }
 
 export const getActionTargetTime = (state: GameState): number => {
+  // prettier-ignore
   switch (state.action) {
     case 'idle': return 100000000
     case 'change-action': return state.actionSwitchTime
