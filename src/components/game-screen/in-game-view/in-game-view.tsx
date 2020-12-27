@@ -18,7 +18,7 @@ export default class InGameView extends React.Component<Props, GameState> {
 
     window.setInterval(this.updateGameState, 1000 / FPS)
     window.setInterval(() => saveGame(this.state), 5 * 1000) // autosave every 5 seconds
-    window.setInterval(this.payWorkerSalaries, 60 * 1000) // 1 minute = 1 hour IG; pay salaries every minute
+    window.setInterval(this.payWorkerSalaries, 60 * 1000) // pay 1/60 hourly salaries every minute
   }
 
   setPlayerAction = (newAction: PlayerAction): void => {
@@ -109,7 +109,8 @@ const nextState = (state: GameState, _: Props): GameState => {
             ns.widgets += 1
             ns.widgetParts -= 1
             ns.energyUsed += 2.0
-          } else {
+          }
+          if (ns.widgetParts <= 0) {
             ns.action = 'idle'
           }
           break
@@ -118,7 +119,8 @@ const nextState = (state: GameState, _: Props): GameState => {
             ns.energyUsed += 0.6
             ns.testedWidgets += 1
             ns.widgets -= 1
-          } else {
+          }
+          if (ns.widgets <= 0) {
             ns.action = 'idle'
           }
           break
@@ -126,7 +128,8 @@ const nextState = (state: GameState, _: Props): GameState => {
           if (ns.testedWidgets > 0) {
             ns.packages += 1
             ns.testedWidgets -= 1
-          } else {
+          }
+          if (ns.testedWidgets <= 0) {
             ns.action = 'idle'
           }
           break
@@ -187,9 +190,7 @@ const nextState = (state: GameState, _: Props): GameState => {
   }
 
   // check unlocks
-  ns.unlockedFeatures = {
-    ...ns.unlockedFeatures
-  }
+  ns.unlockedFeatures = { ...ns.unlockedFeatures } // shallow copy
   if (ns.orders > 0 && !ns.unlockedFeatures["build-button"]) { ns.action = 'idle'; ns.unlockedFeatures["build-button"] = true }
   if (ns.widgets >= 3) { ns.unlockedFeatures["test-button"] = true }
   if (ns.testedWidgets >= 3) { ns.unlockedFeatures["package-button"] = true }
