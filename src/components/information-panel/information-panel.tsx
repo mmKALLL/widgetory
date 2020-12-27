@@ -1,9 +1,9 @@
 import React, { ReactElement } from "react"
 import './information-panel.sass'
-import { getActionTargetTime } from "../game-screen/in-game-view/in-game-view";
 import ActionDescriptionText from "../action-description-text/action-description-text";
-import { GameState } from "../../types";
+import { GameState } from "../../game-logic/types";
 import { formatPrice } from "../../utils/utilities";
+import { getActionTargetTime } from "../../game-logic/game-loop";
 
 export function progressBar(value: number, max: number, barLength: number = 30, character: string = '#'): string {
   let progressPoints = Math.ceil(Math.max(0, Math.min(value, max)) / (max + 0.01) * barLength)

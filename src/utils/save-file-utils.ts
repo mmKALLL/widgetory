@@ -1,4 +1,4 @@
-import { GameState, newGameState } from "../types"
+import { GameState, newGameState } from "../game-logic/types"
 
 const itemName = 'saveFile01'
 

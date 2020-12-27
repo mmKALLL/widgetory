@@ -3,7 +3,7 @@ import MainMenu from './main-menu/main-menu';
 import Cutscene from './cutscene/cutscene';
 import InGameView from './in-game-view/in-game-view';
 import { loadGame } from '../../utils/save-file-utils';
-import { newGameState } from '../../types';
+import { newGameState } from '../../game-logic/types';
 
 type State = {
   screenName: 'main-menu' | 'intro'

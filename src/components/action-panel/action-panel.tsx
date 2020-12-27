@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react'
 import './action-panel.sass'
 import ActionButton from '../action-button/action-button';
-import { FeatureName, PlayerAction } from '../../types';
+import { FeatureName, PlayerAction } from '../../game-logic/types';
 
 interface Props {
   orders: number

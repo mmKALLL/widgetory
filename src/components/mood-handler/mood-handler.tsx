@@ -1,5 +1,5 @@
 import React from 'react'
-import { Color, Mood } from '../../types'
+import { Color, Mood } from '../../game-logic/types'
 
 interface Props {
   mood: Mood
