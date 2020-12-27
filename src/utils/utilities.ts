@@ -1,5 +1,7 @@
 // General use
 
+export const formatPrice = (price: number): string => `${price} ¥`
+
 // Restrict a number between a min/max
 export const clamp = (number: number, min: number, max: number): number => {
   return Math.min(max, Math.max(min, number))
