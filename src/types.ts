@@ -16,6 +16,8 @@ export type Color = {
 export type GameState = {
   action: PlayerAction
   money: number
+  experience: number
+  level: number
   mood: Mood
   unlockedFeatures: { [key in FeatureName]?: boolean }
 
@@ -93,6 +95,8 @@ export type FeatureName =
 export const newGameState: GameState = {
   action: 'idle',
   money: 40000, // in something similar to 2019 yen - i.e. USD 0.01
+  experience: 0,
+  level: 1,
   mood: {
     overall: 28,
     r: 0,
