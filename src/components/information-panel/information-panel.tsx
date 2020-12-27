@@ -32,9 +32,9 @@ export default function InformationPanel(props: { debugEnabled: boolean, state: 
         {/* <div className={props.state.unlockedFeatures["package-button"] ? "information-panel-divider" : "hidden"}></div> */}
 
 
-        <div className={props.state.unlockedFeatures["build-button"] || props.state.unlockedFeatures["purchase-parts-button"] ? "information-panel-divider" : "hidden"}></div>
+        <div className={props.state.unlockedFeatures["build-button"] ? "information-panel-divider" : "hidden"}></div>
 
-        <div className={props.state.unlockedFeatures["build-button"] || props.state.unlockedFeatures["purchase-parts-button"] ? "money-text" : "hidden"}>
+        <div className={props.state.unlockedFeatures["build-button"] ? "money-text" : "hidden"}>
             Money: {formatPrice(props.state.money)}</div>
         <div className={props.state.consultantLevel >= 2 ? "order-cancel-text" : "hidden"}>
             Time until order cancel: {Math.floor(props.state.timeUntilOrderCancel / 1000)} sec</div>
