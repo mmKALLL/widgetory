@@ -122,7 +122,7 @@ export const newGameState: GameState = {
   checkOrderTime: 3000,
   widgetBuildTime: 7000,
   widgetTestTime: 3000,
-  widgetPackageTime: 1200, // TODO: can package without testing?
+  widgetPackageTime: 1200,
   packageDeliveryTime: 12000,
   widgetPartPurchaseTime: 800,
   hireWorkerTime: 32000,
