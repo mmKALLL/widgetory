@@ -15,7 +15,7 @@ export default class FooterArea extends React.Component {
         <GameSavedText />
         <LikeButton liked={this.state.liked} onClick={() => this.setState({ liked: true })} />
         <div>|</div>
-        <Button text="Hard reset" onClick={deleteSaveFileWithConfirm} />
+        <Button className="footer-button" text="Hard reset" onClick={deleteSaveFileWithConfirm} />
         <div>|</div>
         <div className="github"><a href="https://github.com/mmKALLL/widgetory" target="_blank" rel="noopener noreferrer">Github</a></div>
         <div>|</div>
@@ -30,7 +30,7 @@ function LikeButton(props) {
     /* eslint-disable jsx-a11y/accessible-emoji */
     return <div className="footer-thanks">Thanks! ⭐️</div>
   } else {
-    return <Button onClick={props.onClick} text="Like" />
+    return <Button className="footer-button" onClick={props.onClick} text="Like" />
   }
 }
 
