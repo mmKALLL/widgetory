@@ -5,7 +5,7 @@ import ActionPanel from '../../action-panel/action-panel';
 import MoodHandler from '../../mood-handler/mood-handler';
 import InformationPanel from '../../information-panel/information-panel';
 import { DEBUG, FPS, GameState, PlayerAction } from '../../../types';
-import { assertNever, sum } from '../../../utilities';
+import { assertNever, sum } from '../../../utils/utilities';
 
 interface Props {
   initialState: GameState
@@ -17,8 +17,8 @@ export default class InGameView extends React.Component<Props, GameState> {
     this.state = props.initialState
 
     window.setInterval(this.updateGameState, 1000 / FPS)
-    window.setInterval(() => saveGame(this.state), 10 * 1000)
-    window.setInterval(this.payWorkerSalaries, 60 * 1000) // pay salaries every minute
+    window.setInterval(() => saveGame(this.state), 5 * 1000) // autosave every 5 seconds
+    window.setInterval(this.payWorkerSalaries, 60 * 1000) // 1 minute = 1 hour IG; pay salaries every minute
   }
 
   setPlayerAction = (newAction: PlayerAction): void => {
@@ -99,11 +99,10 @@ const nextState = (state: GameState, _: Props): GameState => {
           ns.timeSinceActionStarted = 0
           break
         case 'check-orders':
-          // prettier-ignore
-          if (DEBUG) console.log(`got ${ns.uncheckedOrders} new orders, received ${ns.uncheckedOrders * ns.widgetPrice} yen`)
           ns.orders += ns.uncheckedOrders
           ns.uncheckedOrders = 0
           ns.energyUsed += 0.1
+          ns.action = 'idle'
           break
         case 'build-widget':
           if (ns.widgetParts > 0) {
@@ -168,7 +167,7 @@ const nextState = (state: GameState, _: Props): GameState => {
   if (ns.timeUntilOrderCancel < 0) {
     if (ns.orders > 0) {
       ns.orders -= 1
-      ns.money -= ns.widgetPrice
+      // ns.money -= ns.widgetPrice // TODO: Add this back once player can research "get money at time of order"
       if (DEBUG) console.log(`cancelled order, lost ${ns.widgetPrice} yen, ${ns.orders} checked and ${ns.uncheckedOrders} unchecked left, next in ${newTimeUntilOrderCancel(ns.completedOrders, ns.orders + ns.uncheckedOrders) / 1000} seconds`)
     } else {
       ns.uncheckedOrders -= 1
