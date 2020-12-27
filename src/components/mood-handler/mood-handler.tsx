@@ -31,7 +31,7 @@ export default class MoodHandler extends React.Component<Props> {
   // Return brightness of color in the HSP space; range 0-255.
   // http://alienryderflex.com/hsp.html
   private colorBrightness(color: Color): number {
-    return Math.sqrt(0.299 * color.r * color.r + 0.587 * color.g * color.g + 0.114 * color.b * color.b);
+    return Math.sqrt(0.299 * color.r * color.r + 0.587 * color.g * color.g + 0.114 * color.b * color.b)
   }
 
   // Returns a CSS parseable RGB color.
@@ -48,12 +48,9 @@ export default class MoodHandler extends React.Component<Props> {
     const elem = document.documentElement
     const bgCSSColor = this.colorToCSS(color)
     const textCSSColor = this.textCSSColor(color)
-    elem.style.setProperty("--mood-background-color", bgCSSColor)
-    elem.style.setProperty("--mood-text-color", textCSSColor)
+    elem.style.setProperty('--mood-background-color', bgCSSColor)
+    elem.style.setProperty('--mood-text-color', textCSSColor)
 
-    return (
-      <>
-      </>
-    )
+    return <></>
   }
 }
