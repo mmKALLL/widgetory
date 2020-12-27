@@ -37,6 +37,7 @@ export const nextState = (state: GameState): GameState => {
           if (ns.widgetParts > 0) {
             ns.widgets += 1
             ns.widgetParts -= 1
+            ns.experience += 2
             ns.energyUsed += 2.0
           }
           if (ns.widgetParts <= 0) {
@@ -45,9 +46,10 @@ export const nextState = (state: GameState): GameState => {
           break
         case 'test-widget':
           if (ns.widgets > 0) {
-            ns.energyUsed += 0.6
             ns.testedWidgets += 1
             ns.widgets -= 1
+            ns.experience += 1
+            ns.energyUsed += 0.6
           }
           if (ns.widgets <= 0) {
             ns.action = 'idle'
@@ -57,35 +59,44 @@ export const nextState = (state: GameState): GameState => {
           if (ns.testedWidgets > 0) {
             ns.packages += 1
             ns.testedWidgets -= 1
+            ns.experience += 1
           }
           if (ns.testedWidgets <= 0) {
             ns.action = 'idle'
           }
           break
         case 'deliver-packages':
-          const numberDelivered = Math.min(ns.orders, ns.packages)
-          console.log(`delivering ${numberDelivered} packages`)
+          if (ns.orders > 0) {
+            const numberDelivered = Math.min(ns.orders, ns.packages)
+            console.log(`delivering ${numberDelivered} packages`)
 
-          ns.orders -= numberDelivered
-          ns.completedOrders += numberDelivered
-          ns.timeUntilOrderCancel += newOrderTime(ns.completedOrders) * numberDelivered
-          ns.packages -= numberDelivered
-          ns.money += numberDelivered * ns.widgetPrice
+            ns.orders -= numberDelivered
+            ns.completedOrders += numberDelivered
+            ns.timeUntilOrderCancel += newOrderTime(ns.completedOrders) * numberDelivered
+            ns.packages -= numberDelivered
+            ns.money += numberDelivered * ns.widgetPrice
+            ns.widgetPrice -= numberDelivered
+            ns.experience += numberDelivered
 
-          ns.widgetPrice -= numberDelivered
-
-          ns.action = 'idle'
+            ns.action = 'idle'
+          }
           break
         case 'purchase-parts':
           if (ns.money >= ns.widgetPartPrice) {
             ns.widgetParts += 1
             ns.money -= ns.widgetPartPrice
+            ns.experience += 1
+          }
+          if (ns.money < ns.widgetPartPrice) {
+            ns.action = 'idle'
           }
           break
         case 'hire-worker':
           if (ns.money >= ns.workerHourlySalary * 8) {
             ns.unassignedWorkers += 1
-          } else {
+            ns.experience += 6
+          }
+          if (ns.money < ns.workerHourlySalary * 8) {
             ns.action = 'idle'
           }
           break
@@ -184,4 +195,9 @@ export const getActionTargetTime = (state: GameState): number => {
     case 'hire-worker': return state.hireWorkerTime
     default: assertNever(state.action)
   }
+}
+
+// Returns a ["remaining exp needed until next level", "total exp needed this level"] tuple
+export function experienceToNextLevel({ level }: Pick<GameState, 'level'>): number {
+  return Math.pow(level + 9, 2) // 100, 121, 144, ...
 }
