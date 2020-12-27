@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react'
 import './action-panel.sass'
-import ActionButton from '../action-button/action-button';
-import { FeatureName, PlayerAction } from '../../game-logic/types';
+import ActionButton from '../action-button/action-button'
+import { FeatureName, PlayerAction } from '../../game-logic/types'
 
 interface Props {
   orders: number
@@ -26,6 +26,7 @@ export default function ActionPanel(props: Props): ReactElement {
       {props.unlockedFeatures['package-button'] && <ActionButton text="Package widgets" subtext={`Packages: ${props.packages}`} onClick={() => props.setPlayerAction('package-widget')} />}
       {props.unlockedFeatures['deliver-button'] && <ActionButton text="Deliver packages" subtext={`Completed orders: ${props.completedOrders}`} onClick={() => props.setPlayerAction('deliver-packages')} />}
       {props.unlockedFeatures['purchase-parts-button'] && <ActionButton text="Purchase parts" subtext={`Price/unit: ${props.partPrice}`} onClick={() => props.setPlayerAction('purchase-parts')} />}
+      {/* {props.unlockedFeatures['hire-worker-button'] && <ActionButton text="Hire worker" subtext={`Price/hour: ${props.}`} onClick={() => props.setPlayerAction('hire-worker')} />} */}
     </div>
   )
 }
