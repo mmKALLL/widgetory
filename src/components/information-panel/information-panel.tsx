@@ -3,6 +3,7 @@ import './information-panel.sass'
 import { getActionTargetTime } from "../game-screen/in-game-view/in-game-view";
 import ActionDescriptionText from "../action-description-text/action-description-text";
 import { GameState } from "../../types";
+import { formatPrice } from "../../utils/utilities";
 
 export function progressBar(value: number, max: number, barLength: number = 30, character: string = '#'): string {
   let progressPoints = Math.ceil(Math.max(0, Math.min(value, max)) / (max + 0.01) * barLength)
@@ -34,13 +35,13 @@ export default function InformationPanel(props: { debugEnabled: boolean, state: 
         <div className={props.state.unlockedFeatures["build-button"] || props.state.unlockedFeatures["purchase-parts-button"] ? "information-panel-divider" : "hidden"}></div>
 
         <div className={props.state.unlockedFeatures["build-button"] || props.state.unlockedFeatures["purchase-parts-button"] ? "money-text" : "hidden"}>
-            Money: {props.state.money}</div>
+            Money: {formatPrice(props.state.money)}</div>
         <div className={props.state.consultantLevel >= 2 ? "order-cancel-text" : "hidden"}>
             Time until order cancel: {Math.floor(props.state.timeUntilOrderCancel / 1000)} sec</div>
         <div className={props.state.unlockedFeatures["purchase-parts-button"] ? "widget-part-price-text" : "hidden"}>
-            Widget part purchase price: {props.state.widgetPartPrice}</div>
+            Widget part purchase price: {formatPrice(props.state.widgetPartPrice)}</div>
         <div className={props.state.unlockedFeatures["deliver-button"] ? "widget-price-text" : "hidden"}>
-            Widget sell price: {props.state.widgetPrice}</div>
+            Widget sell price: {formatPrice(props.state.widgetPrice)}</div>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import { PlayerAction } from '../../types'
-import { assertNever } from '../../utilities'
+import { assertNever } from '../../utils/utilities'
 
 interface Props {
   currentAction: PlayerAction
