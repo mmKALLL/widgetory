@@ -5,7 +5,7 @@ import ActionPanel from '../../action-panel/action-panel';
 import MoodHandler from '../../mood-handler/mood-handler';
 import InformationPanel from '../../information-panel/information-panel';
 import { DEBUG, FPS, GameState, PlayerAction } from '../../../types';
-import { sum } from '../../../utilities';
+import { assertNever, sum } from '../../../utilities';
 
 interface Props {
   initialState: GameState
@@ -94,21 +94,24 @@ const nextState = (state: GameState, _: Props): GameState => {
       ns.timeSinceActionStarted -= targetTime
       switch (ns.action) {
         case 'change-action':
-          ns.action = ns.nextAction !== undefined ? ns.nextAction : 'idle'
+          ns.action = ns.nextAction ?? 'idle'
           ns.nextAction = undefined
           ns.timeSinceActionStarted = 0
           break
         case 'check-orders':
+          // prettier-ignore
           if (DEBUG) console.log(`got ${ns.uncheckedOrders} new orders, received ${ns.uncheckedOrders * ns.widgetPrice} yen`)
           ns.orders += ns.uncheckedOrders
-          ns.money += ns.uncheckedOrders * ns.widgetPrice
           ns.uncheckedOrders = 0
+          ns.energyUsed += 0.1
           break
         case 'build-widget':
           if (ns.widgetParts > 0) {
-            ns.energyUsed += 2.0
             ns.widgets += 1
             ns.widgetParts -= 1
+            ns.energyUsed += 2.0
+          } else {
+            ns.action = 'idle'
           }
           break
         case 'test-widget':
@@ -116,12 +119,16 @@ const nextState = (state: GameState, _: Props): GameState => {
             ns.energyUsed += 0.6
             ns.testedWidgets += 1
             ns.widgets -= 1
+          } else {
+            ns.action = 'idle'
           }
           break
         case 'package-widget':
           if (ns.testedWidgets > 0) {
             ns.packages += 1
             ns.testedWidgets -= 1
+          } else {
+            ns.action = 'idle'
           }
           break
         case 'deliver-packages':
@@ -132,6 +139,7 @@ const nextState = (state: GameState, _: Props): GameState => {
           ns.completedOrders += numberDelivered
           ns.timeUntilOrderCancel += newOrderTime(ns.completedOrders) * numberDelivered
           ns.packages -= numberDelivered
+          ns.money += numberDelivered * ns.widgetPrice
 
           ns.widgetPrice -= numberDelivered
 
@@ -144,12 +152,13 @@ const nextState = (state: GameState, _: Props): GameState => {
           }
           break
         case 'hire-worker':
-          if (ns.money >= ns.workerHourlySalary) {
+          if (ns.money >= ns.workerHourlySalary * 8) {
             ns.unassignedWorkers += 1
+          } else {
+            ns.action ='idle'
           }
           break
-        default:
-
+        default: assertNever(ns.action)
       }
     }
   }
@@ -219,6 +228,7 @@ const newTimeUntilOrderCancel = (deliveredPackages: number, outstandingOrders: n
 
 export const getActionTargetTime = (state: GameState): number => {
   switch (state.action) {
+    case 'idle': return 100000000
     case 'change-action': return state.actionSwitchTime
 
     case 'check-orders': return state.checkOrderTime
@@ -229,8 +239,7 @@ export const getActionTargetTime = (state: GameState): number => {
 
     case 'purchase-parts': return state.widgetPartPurchaseTime
     case 'hire-worker': return state.hireWorkerTime
-    default:
-      return 10000000000
+    default: assertNever(state.action)
   }
 }
 
